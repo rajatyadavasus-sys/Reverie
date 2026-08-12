@@ -1,0 +1,47 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: #0B0F19;
+  --color-card: #171C2A;
+  --color-accent: #aa3bff;
+  --color-accent-hover: #c084fc;
+}
+
+body {
+  background-color: var(--color-background);
+  color: #ffffff;
+  margin: 0;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Base custom styles to ensure spacing */
+* {
+  box-sizing: border-box;
+}
+
+/* Auto-scrolling carousel animations */
+@keyframes marquee-y {
+  from { transform: translateY(0); }
+  to { transform: translateY(-50%); }
+}
+
+@keyframes marquee-y-reverse {
+  from { transform: translateY(-50%); }
+  to { transform: translateY(0); }
+}
+
+.animate-marquee-y {
+  animation: marquee-y 40s linear infinite;
+}
+
+.animate-marquee-y-reverse {
+  animation: marquee-y-reverse 40s linear infinite;
+}
+
+/* Pause on hover for marquees */
+.group-hover\/marquee:hover .animate-marquee-y,
+.group-hover\/marquee:hover .animate-marquee-y-reverse {
+  animation-play-state: paused;
+}
