@@ -9,7 +9,7 @@ const ReviewContext = createContext();
 // { id, media_type, title, poster_path, tag, opinion, createdAt }
 
 export const ReviewProvider = ({ children }) => {
-  const { currentUser, loginWithGoogle } = useAuth();
+  const { currentUser, promptLogin } = useAuth();
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -44,8 +44,7 @@ export const ReviewProvider = ({ children }) => {
 
   const addReview = (review) => {
     if (!currentUser) {
-      alert("Please Sign In to save reviews!");
-      loginWithGoogle();
+      promptLogin();
       return;
     }
 

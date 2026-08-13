@@ -4,11 +4,13 @@ import { Search, Heart, User, Sparkles, Dices, Loader2, LogOut } from 'lucide-re
 import { getTrendingMovies, getTrendingTV } from '../../services/tmdb';
 import SearchBar from '../common/SearchBar';
 import { useAuth } from '../../context/AuthContext';
+import AuthModal from '../auth/AuthModal';
 
 const Navbar = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const { currentUser, loginWithGoogle, logout } = useAuth();
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const { currentUser, logout } = useAuth();
 
   const navLinkClass = ({ isActive }) => 
     `text-lg font-medium transition-colors duration-300 ${isActive ? 'text-[var(--color-accent)]' : 'text-gray-300 hover:text-white'}`;
@@ -30,6 +32,7 @@ const Navbar = () => {
   };
 
   return (
+    <>
     <nav className="sticky top-0 z-50 bg-[#0B0F19]/80 backdrop-blur-xl border-b border-white/5 py-6">
       <div className="container mx-auto px-8 lg:px-16 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-3 group">
@@ -98,7 +101,7 @@ const Navbar = () => {
             </div>
           ) : (
             <button 
-              onClick={loginWithGoogle}
+              onClick={() => setShowAuthModal(true)}
               className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors border border-white/20 ml-2 font-semibold text-sm"
             >
               <User className="w-4 h-4" />
@@ -108,7 +111,11 @@ const Navbar = () => {
         </div>
       </div>
     </nav>
+
+    {showAuthModal && <AuthModal onClose={() => setShowAuthModal(false)} />}
+  </>
   );
 };
 
 export default Navbar;
+

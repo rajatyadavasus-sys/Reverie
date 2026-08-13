@@ -6,7 +6,7 @@ import { doc, onSnapshot, setDoc } from 'firebase/firestore';
 const WatchlistContext = createContext();
 
 export const WatchlistProvider = ({ children }) => {
-  const { currentUser, loginWithGoogle } = useAuth();
+  const { currentUser, promptLogin } = useAuth();
   const [watchlist, setWatchlist] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -41,8 +41,7 @@ export const WatchlistProvider = ({ children }) => {
 
   const addToWatchlist = (media) => {
     if (!currentUser) {
-      alert("Please Sign In to save movies to your watchlist!");
-      loginWithGoogle();
+      promptLogin();
       return;
     }
     

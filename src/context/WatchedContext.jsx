@@ -6,7 +6,7 @@ import { doc, onSnapshot, setDoc } from 'firebase/firestore';
 const WatchedContext = createContext();
 
 export const WatchedProvider = ({ children }) => {
-  const { currentUser, loginWithGoogle } = useAuth();
+  const { currentUser, promptLogin } = useAuth();
   const [watched, setWatched] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -41,8 +41,7 @@ export const WatchedProvider = ({ children }) => {
 
   const markWatched = (media) => {
     if (!currentUser) {
-      alert("Please Sign In to track what you've watched!");
-      loginWithGoogle();
+      promptLogin();
       return;
     }
 

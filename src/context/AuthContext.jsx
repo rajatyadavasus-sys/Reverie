@@ -1,12 +1,14 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { onAuthStateChanged, signInWithPopup, signOut } from 'firebase/auth';
 import { auth, googleProvider } from '../config/firebase';
+import AuthModal from '../components/auth/AuthModal';
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -25,6 +27,11 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Call this anywhere in the app to open the beautiful auth modal
+  const promptLogin = useCallback(() => {
+    setShowModal(true);
+  }, []);
+
   const logout = async () => {
     try {
       await signOut(auth);
@@ -34,8 +41,9 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ currentUser, loginWithGoogle, logout }}>
+    <AuthContext.Provider value={{ currentUser, loginWithGoogle, promptLogin, logout }}>
       {!loading && children}
+      {showModal && <AuthModal onClose={() => setShowModal(false)} />}
     </AuthContext.Provider>
   );
 };
