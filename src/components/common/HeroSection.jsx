@@ -9,9 +9,8 @@ const EMOTIONS = [
     Icon: Smile,
     label: 'Happy',
     color: '#f59e0b',
-    glow: 'rgba(245,158,11,0.4)',
-    bg: 'rgba(245,158,11,0.1)',
-    border: 'rgba(245,158,11,0.3)',
+    glow: 'rgba(245,158,11,0.6)',
+    gradient: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
     emoji: '☀️',
   },
   {
@@ -19,9 +18,8 @@ const EMOTIONS = [
     Icon: CloudRain,
     label: 'Melancholic',
     color: '#60a5fa',
-    glow: 'rgba(96,165,250,0.4)',
-    bg: 'rgba(96,165,250,0.1)',
-    border: 'rgba(96,165,250,0.3)',
+    glow: 'rgba(96,165,250,0.6)',
+    gradient: 'linear-gradient(135deg, #60a5fa 0%, #2563eb 100%)',
     emoji: '🌧️',
   },
   {
@@ -29,9 +27,8 @@ const EMOTIONS = [
     Icon: Heart,
     label: 'Romantic',
     color: '#f472b6',
-    glow: 'rgba(244,114,182,0.4)',
-    bg: 'rgba(244,114,182,0.1)',
-    border: 'rgba(244,114,182,0.3)',
+    glow: 'rgba(244,114,182,0.6)',
+    gradient: 'linear-gradient(135deg, #f472b6 0%, #db2777 100%)',
     emoji: '🌹',
   },
   {
@@ -39,9 +36,8 @@ const EMOTIONS = [
     Icon: Zap,
     label: 'Excited',
     color: '#fb923c',
-    glow: 'rgba(251,146,60,0.4)',
-    bg: 'rgba(251,146,60,0.1)',
-    border: 'rgba(251,146,60,0.3)',
+    glow: 'rgba(251,146,60,0.6)',
+    gradient: 'linear-gradient(135deg, #fb923c 0%, #ea580c 100%)',
     emoji: '⚡',
   },
   {
@@ -49,9 +45,8 @@ const EMOTIONS = [
     Icon: Ghost,
     label: 'Thrilled',
     color: '#c084fc',
-    glow: 'rgba(192,132,252,0.4)',
-    bg: 'rgba(192,132,252,0.1)',
-    border: 'rgba(192,132,252,0.3)',
+    glow: 'rgba(192,132,252,0.6)',
+    gradient: 'linear-gradient(135deg, #c084fc 0%, #9333ea 100%)',
     emoji: '👻',
   },
   {
@@ -59,9 +54,8 @@ const EMOTIONS = [
     Icon: Leaf,
     label: 'Relaxed',
     color: '#34d399',
-    glow: 'rgba(52,211,153,0.4)',
-    bg: 'rgba(52,211,153,0.1)',
-    border: 'rgba(52,211,153,0.3)',
+    glow: 'rgba(52,211,153,0.6)',
+    gradient: 'linear-gradient(135deg, #34d399 0%, #059669 100%)',
     emoji: '🌿',
   },
   {
@@ -69,9 +63,8 @@ const EMOTIONS = [
     Icon: Aperture,
     label: 'Mind-Bending',
     color: '#818cf8',
-    glow: 'rgba(129,140,248,0.4)',
-    bg: 'rgba(129,140,248,0.1)',
-    border: 'rgba(129,140,248,0.3)',
+    glow: 'rgba(129,140,248,0.6)',
+    gradient: 'linear-gradient(135deg, #818cf8 0%, #4f46e5 100%)',
     emoji: '🌀',
   },
 ];
@@ -193,49 +186,27 @@ const HeroSection = () => {
                   to={`/emotion/${em.key}`}
                   onMouseEnter={() => setHoveredEmotion(em.key)}
                   onMouseLeave={() => setHoveredEmotion(null)}
-                  className="relative group flex items-center gap-3 pr-6 pl-2 py-2 rounded-full transition-all duration-300 overflow-hidden backdrop-blur-xl"
+                  className="relative group flex items-center gap-3 px-6 py-3.5 rounded-2xl transition-all duration-300"
                   style={{
-                    background: hoveredEmotion === em.key ? em.bg : 'linear-gradient(145deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.01) 100%)',
-                    borderColor: hoveredEmotion === em.key ? em.border : 'rgba(255,255,255,0.08)',
-                    borderWidth: '1px',
-                    borderStyle: 'solid',
-                    boxShadow: hoveredEmotion === em.key ? `0 8px 32px -8px ${em.glow}, inset 0 1px 0 rgba(255,255,255,0.2)` : 'inset 0 1px 0 rgba(255,255,255,0.05)',
-                    transform: hoveredEmotion === em.key ? 'translateY(-4px) scale(1.02)' : 'none',
+                    background: em.gradient,
+                    boxShadow: hoveredEmotion === em.key 
+                      ? `0 15px 40px -5px ${em.glow}, inset 0 2px 0 rgba(255,255,255,0.4), inset 0 -3px 0 rgba(0,0,0,0.4)` 
+                      : `0 8px 20px -8px ${em.glow}, inset 0 2px 0 rgba(255,255,255,0.2), inset 0 -3px 0 rgba(0,0,0,0.4)`,
+                    transform: hoveredEmotion === em.key ? 'translateY(-6px) scale(1.04)' : 'none',
                     animationDelay: `${i * 50}ms`,
                   }}
                 >
-                  {/* Glowing background on hover */}
-                  <div
-                    className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-full"
-                    style={{ background: `radial-gradient(circle at center, ${em.glow} 0%, transparent 70%)` }}
-                  />
+                  {/* Subtle bright overlay on hover */}
+                  <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-300 rounded-2xl pointer-events-none" />
 
-                  {/* Icon Circle */}
-                  <div 
-                    className="relative z-10 w-10 h-10 rounded-full flex items-center justify-center shadow-inner transition-all duration-300"
-                    style={{ 
-                      background: hoveredEmotion === em.key ? em.color : 'rgba(0,0,0,0.3)',
-                      boxShadow: hoveredEmotion === em.key ? `0 0 20px ${em.glow}` : 'inset 0 2px 4px rgba(0,0,0,0.5)',
-                    }}
-                  >
-                    <em.Icon
-                      className="w-5 h-5 transition-all duration-300"
-                      style={{ 
-                        color: hoveredEmotion === em.key ? '#ffffff' : em.color,
-                        transform: hoveredEmotion === em.key ? 'scale(1.1)' : 'scale(1)' 
-                      }}
-                    />
-                  </div>
-
-                  {/* Text Label */}
-                  <span
-                    className="text-sm font-bold tracking-wide transition-colors duration-300 relative z-10"
-                    style={{ 
-                      color: hoveredEmotion === em.key ? '#ffffff' : '#e5e7eb',
-                      textShadow: hoveredEmotion === em.key ? `0 0 10px ${em.color}` : 'none'
-                    }}
-                  >
-                    {em.label} <span className="opacity-80 ml-1">{em.emoji}</span>
+                  <em.Icon className="w-6 h-6 text-white drop-shadow-md transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-12" />
+                  
+                  <span className="text-base font-bold text-white tracking-wide drop-shadow-md">
+                    {em.label}
+                  </span>
+                  
+                  <span className="opacity-90 text-xl drop-shadow-md transition-transform duration-300 group-hover:scale-110 group-hover:rotate-12">
+                    {em.emoji}
                   </span>
                 </Link>
               ))}
