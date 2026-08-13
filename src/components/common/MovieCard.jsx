@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Star, Tv, Film } from 'lucide-react';
-import { getReviewTag, getTagColors } from '../../utils/ratings';
+import { getReviewTag, getTagColors, ReviewIcon } from '../../utils/ratings';
 
 const MovieCard = ({ item, mediaType = 'movie' }) => {
   const type = item.media_type || mediaType;
@@ -55,7 +55,7 @@ const MovieCard = ({ item, mediaType = 'movie' }) => {
 
           {/* FeelFlix Tag */}
           <div className={`self-start inline-flex items-center gap-1.5 px-3 py-1 rounded-full border text-xs font-bold uppercase tracking-wide ${tagColors}`}>
-            <span>{tag.emoji}</span>
+            <ReviewIcon iconName={tag.icon} className="w-3.5 h-3.5" />
             <span>{tag.label}</span>
           </div>
 

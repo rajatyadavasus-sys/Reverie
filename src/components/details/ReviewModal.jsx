@@ -3,10 +3,12 @@ import { X, Star, Send, Trash2 } from 'lucide-react';
 import { useReviews } from '../../context/ReviewContext';
 import { useWatched } from '../../context/WatchedContext';
 
+import { ReviewIcon } from '../../utils/ratings';
+
 const TAGS = [
   {
     key: 'masterpiece',
-    emoji: '🏆',
+    icon: 'Trophy',
     label: 'Masterpiece',
     desc: 'An absolute gem. One for the ages.',
     colors: 'border-yellow-500 bg-yellow-500/10 text-yellow-400',
@@ -14,7 +16,7 @@ const TAGS = [
   },
   {
     key: 'must-watch',
-    emoji: '👍',
+    icon: 'ThumbsUp',
     label: 'Must Watch',
     desc: 'Highly recommend. Don\'t miss it.',
     colors: 'border-green-500 bg-green-500/10 text-green-400',
@@ -22,7 +24,7 @@ const TAGS = [
   },
   {
     key: 'timepass',
-    emoji: '☕',
+    icon: 'Coffee',
     label: 'Timepass',
     desc: 'Decent. Good for a lazy evening.',
     colors: 'border-blue-500 bg-blue-500/10 text-blue-400',
@@ -30,7 +32,7 @@ const TAGS = [
   },
   {
     key: 'skip',
-    emoji: '❌',
+    icon: 'XCircle',
     label: 'Skip',
     desc: 'Save your time. Not worth it.',
     colors: 'border-red-500 bg-red-500/10 text-red-400',
@@ -140,11 +142,13 @@ const ReviewModal = ({ media, mediaType, onClose }) => {
                         isSelected ? tag.selectedColors : `${tag.colors} hover:brightness-110`
                       }`}
                     >
-                      <span className="text-3xl">{tag.emoji}</span>
-                      <div>
-                        <p className="font-bold text-base">{tag.label}</p>
-                        <p className="text-xs opacity-70 mt-0.5 leading-snug">{tag.desc}</p>
+                      <div className="w-8 h-8 flex items-center justify-center bg-white/10 rounded-full mb-1">
+                        <ReviewIcon iconName={tag.icon} className="w-4 h-4" />
                       </div>
+                      <span className="font-bold text-lg">{tag.label}</span>
+                      <span className="text-xs opacity-70 leading-relaxed font-medium">
+                        {tag.desc}
+                      </span>
                     </button>
                   );
                 })}

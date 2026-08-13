@@ -15,7 +15,7 @@ import { Star, Clock, Calendar, Heart, Tv, Film, Eye, EyeOff, MessageSquarePlus,
 import { useWatchlist } from '../context/WatchlistContext';
 import { useWatched } from '../context/WatchedContext';
 import { useReviews } from '../context/ReviewContext';
-import { getReviewTag, getTagColors } from '../utils/ratings';
+import { getReviewTag, getTagColors, ReviewIcon } from '../utils/ratings';
 
 const ReviewTag = ({ voteAverage, voteCount }) => {
   const tag = getReviewTag(voteAverage, voteCount);
@@ -23,7 +23,7 @@ const ReviewTag = ({ voteAverage, voteCount }) => {
 
   return (
     <div className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-full border text-sm font-bold tracking-wide uppercase ${colors}`}>
-      <span>{tag.emoji}</span>
+      <ReviewIcon iconName={tag.icon} className="w-4 h-4" />
       <span>{tag.label}</span>
       <span className="hidden md:inline opacity-60 normal-case font-normal">— {tag.description}</span>
     </div>

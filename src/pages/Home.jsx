@@ -33,21 +33,51 @@ const Home = () => {
   const [loading, setLoading]               = useState(true);
 
   useEffect(() => {
+    // Helper to shuffle array
+    const shuffle = (array) => {
+      const arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    };
+
     const fetchTrending = async () => {
       try {
-        const [moviesData, tvData] = await Promise.all([
+        const [m1, m2, t1, t2] = await Promise.all([
           getTrendingMovies('day'),
+          trendingMovieFetch(2),
           getTrendingTV('day'),
+          trendingTVFetch(2)
         ]);
-        setTrendingMovies(moviesData.results.slice(0, 10));
-        setTrendingTV(tvData.results.slice(0, 10));
+
+        const allMovies = [...m1.results, ...m2.results];
+        const allTV = [...t1.results, ...t2.results];
+
+        const updateGrid = () => {
+          setTrendingMovies(shuffle(allMovies).slice(0, 10));
+          setTrendingTV(shuffle(allTV).slice(0, 10));
+        };
+
+        updateGrid();
+        
+        // Auto-refresh the grid every 15 seconds
+        const interval = setInterval(updateGrid, 15000);
+        return () => clearInterval(interval);
+
       } catch (err) {
         console.error('Trending fetch error:', err);
       } finally {
         setLoading(false);
       }
     };
-    fetchTrending();
+    
+    // The inner fetch is async, but we need to return the cleanup fn from useEffect.
+    // So we store the cleanup from fetchTrending and call it.
+    let cleanup = null;
+    fetchTrending().then(fn => { if (fn) cleanup = fn; });
+    return () => { if (cleanup) cleanup(); };
   }, []);
 
 

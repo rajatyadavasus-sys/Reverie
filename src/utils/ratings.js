@@ -1,3 +1,6 @@
+import React from 'react';
+import * as Icons from 'lucide-react';
+
 /**
  * Calculates a human-readable FeelFlix review tag.
  * Considers BOTH rating AND vote count to avoid mislabelling
@@ -18,7 +21,7 @@ export const getReviewTag = (voteAverage, voteCount) => {
       label: 'Too Early to Tell',
       type: 'early',
       description: 'Not enough votes yet',
-      emoji: '🕐',
+      icon: 'Clock',
     };
   }
 
@@ -27,7 +30,7 @@ export const getReviewTag = (voteAverage, voteCount) => {
       label: 'Masterpiece',
       type: 'masterpiece',
       description: 'A rare gem — universally loved',
-      emoji: '🏆',
+      icon: 'Trophy',
     };
   }
 
@@ -36,7 +39,7 @@ export const getReviewTag = (voteAverage, voteCount) => {
       label: 'Must Watch',
       type: 'muswatch',
       description: "Highly recommended — don't miss it",
-      emoji: '👍',
+      icon: 'ThumbsUp',
     };
   }
 
@@ -45,7 +48,7 @@ export const getReviewTag = (voteAverage, voteCount) => {
       label: 'Timepass',
       type: 'timepass',
       description: 'Decent watch for a lazy evening',
-      emoji: '☕',
+      icon: 'Coffee',
     };
   }
 
@@ -54,7 +57,7 @@ export const getReviewTag = (voteAverage, voteCount) => {
       label: 'Disappointing',
       type: 'disappointing',
       description: 'Could have been better',
-      emoji: '😬',
+      icon: 'Frown',
     };
   }
 
@@ -62,7 +65,7 @@ export const getReviewTag = (voteAverage, voteCount) => {
     label: 'Skip',
     type: 'skip',
     description: 'Not worth your time',
-    emoji: '❌',
+    icon: 'XCircle',
   };
 };
 
@@ -79,4 +82,12 @@ export const getTagColors = (type) => {
     early:         'bg-gray-500/15 text-gray-400 border-gray-500/30',
   };
   return map[type] || map.early;
+};
+
+/**
+ * Renders the corresponding Lucide Icon
+ */
+export const ReviewIcon = ({ iconName, className }) => {
+  const IconComponent = Icons[iconName] || Icons.Circle;
+  return <IconComponent className={className} />;
 };
