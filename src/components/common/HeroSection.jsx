@@ -1,7 +1,73 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Play, Sparkles } from 'lucide-react';
+import { Play, Sparkles, Smile, CloudRain, Heart, Zap, Ghost, Leaf, Aperture } from 'lucide-react';
 import { getTrendingMovies } from '../../services/tmdb';
+
+const EMOTIONS = [
+  {
+    key: 'happy',
+    Icon: Smile,
+    label: 'Happy',
+    color: '#f59e0b',
+    glow: 'rgba(245,158,11,0.4)',
+    bg: 'rgba(245,158,11,0.1)',
+    border: 'rgba(245,158,11,0.3)',
+  },
+  {
+    key: 'sad',
+    Icon: CloudRain,
+    label: 'Melancholic',
+    color: '#60a5fa',
+    glow: 'rgba(96,165,250,0.4)',
+    bg: 'rgba(96,165,250,0.1)',
+    border: 'rgba(96,165,250,0.3)',
+  },
+  {
+    key: 'romantic',
+    Icon: Heart,
+    label: 'Romantic',
+    color: '#f472b6',
+    glow: 'rgba(244,114,182,0.4)',
+    bg: 'rgba(244,114,182,0.1)',
+    border: 'rgba(244,114,182,0.3)',
+  },
+  {
+    key: 'excited',
+    Icon: Zap,
+    label: 'Excited',
+    color: '#fb923c',
+    glow: 'rgba(251,146,60,0.4)',
+    bg: 'rgba(251,146,60,0.1)',
+    border: 'rgba(251,146,60,0.3)',
+  },
+  {
+    key: 'scared',
+    Icon: Ghost,
+    label: 'Thrilled',
+    color: '#c084fc',
+    glow: 'rgba(192,132,252,0.4)',
+    bg: 'rgba(192,132,252,0.1)',
+    border: 'rgba(192,132,252,0.3)',
+  },
+  {
+    key: 'relaxed',
+    Icon: Leaf,
+    label: 'Relaxed',
+    color: '#34d399',
+    glow: 'rgba(52,211,153,0.4)',
+    bg: 'rgba(52,211,153,0.1)',
+    border: 'rgba(52,211,153,0.3)',
+  },
+  {
+    key: 'mind-bending',
+    Icon: Aperture,
+    label: 'Mind-Bending',
+    color: '#818cf8',
+    glow: 'rgba(129,140,248,0.4)',
+    bg: 'rgba(129,140,248,0.1)',
+    border: 'rgba(129,140,248,0.3)',
+  },
+];
 
 const MarqueeColumn = ({ items, reverse = false }) => {
   // We duplicate the items array so it can loop seamlessly
@@ -33,6 +99,7 @@ const MarqueeColumn = ({ items, reverse = false }) => {
 const HeroSection = () => {
   const [postersCol1, setPostersCol1] = useState([]);
   const [postersCol2, setPostersCol2] = useState([]);
+  const [hoveredEmotion, setHoveredEmotion] = useState(null);
 
   // Helper to shuffle array
   const shuffle = (array) => {
@@ -79,7 +146,7 @@ const HeroSection = () => {
       {/* Content wrapper */}
       <div className="relative z-10 container mx-auto px-8 lg:px-16 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
         
-        {/* Left Side: Text Content */}
+        {/* Left Side: Text Content & Mood Discovery */}
         <div className="text-center lg:text-left flex flex-col items-center lg:items-start pt-20 lg:pt-0">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 backdrop-blur-md border border-white/10 mb-8">
             <Sparkles className="w-5 h-5 text-[var(--color-accent)]" />
@@ -93,25 +160,65 @@ const HeroSection = () => {
             </span>
           </h1>
           
-          <p className="text-xl md:text-2xl text-gray-400 max-w-xl mb-12 leading-relaxed font-light">
+          <p className="text-xl md:text-2xl text-gray-400 max-w-xl mb-10 leading-relaxed font-light">
             Explore a universe of cinematic experiences curated by the feelings they evoke. Masterpieces await.
           </p>
+
+          <Link 
+            to="/explore" 
+            className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-white font-bold text-lg transition-all hover:scale-105 hover:shadow-[0_0_40px_-10px_var(--color-accent)] mb-12"
+          >
+            <Play className="w-6 h-6 fill-white" />
+            Browse Movies
+          </Link>
           
-          <div className="flex flex-col sm:flex-row items-center gap-5">
-            <Link 
-              to="/explore" 
-              className="flex items-center gap-3 px-8 py-4 rounded-full bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-white font-bold text-lg transition-all hover:scale-105 hover:shadow-[0_0_40px_-10px_var(--color-accent)]"
-            >
-              <Play className="w-6 h-6 fill-white" />
-              Browse Movies
-            </Link>
-            <Link 
-              to="/emotions" 
-              className="px-8 py-4 rounded-full bg-white/5 hover:bg-white/10 backdrop-blur-md border border-white/10 text-white font-bold text-lg transition-all hover:scale-105"
-            >
-              Explore by Mood
-            </Link>
+          {/* Stunning Mood Discovery Block */}
+          <div className="w-full max-w-xl">
+            <div className="flex items-center gap-4 mb-6">
+              <h3 className="text-sm font-bold tracking-[0.2em] uppercase text-gray-400">Or pick your mood</h3>
+              <div className="flex-1 h-px bg-gradient-to-r from-white/10 to-transparent"></div>
+            </div>
+            
+            <div className="flex flex-wrap gap-3 lg:gap-4 justify-center lg:justify-start">
+              {EMOTIONS.map((em, i) => (
+                <Link
+                  key={em.key}
+                  to={`/emotion/${em.key}`}
+                  onMouseEnter={() => setHoveredEmotion(em.key)}
+                  onMouseLeave={() => setHoveredEmotion(null)}
+                  className="relative group flex items-center gap-2 px-5 py-3 rounded-2xl transition-all duration-300 overflow-hidden bg-white/[0.02] border border-white/5"
+                  style={{
+                    background: hoveredEmotion === em.key ? em.bg : 'rgba(255,255,255,0.03)',
+                    borderColor: hoveredEmotion === em.key ? em.border : 'rgba(255,255,255,0.05)',
+                    boxShadow: hoveredEmotion === em.key ? `0 8px 32px -8px ${em.glow}, inset 0 1px 0 rgba(255,255,255,0.1)` : 'none',
+                    transform: hoveredEmotion === em.key ? 'translateY(-4px) scale(1.05)' : 'none',
+                    animationDelay: `${i * 50}ms`,
+                  }}
+                >
+                  {/* Ambient glow blob inside the pill */}
+                  <div
+                    className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-2xl"
+                    style={{ background: `radial-gradient(circle at center, ${em.glow} 0%, transparent 70%)` }}
+                  />
+
+                  <em.Icon
+                    className="w-5 h-5 transition-all duration-300 relative z-10"
+                    style={{ 
+                      color: hoveredEmotion === em.key ? em.color : '#9ca3af',
+                      transform: hoveredEmotion === em.key ? 'scale(1.2) rotate(-10deg)' : 'scale(1)' 
+                    }}
+                  />
+                  <span
+                    className="text-sm font-semibold transition-colors duration-300 relative z-10"
+                    style={{ color: hoveredEmotion === em.key ? '#ffffff' : '#d1d5db' }}
+                  >
+                    {em.label}
+                  </span>
+                </Link>
+              ))}
+            </div>
           </div>
+
         </div>
 
         {/* Right Side: Animated Posters Carousel */}
