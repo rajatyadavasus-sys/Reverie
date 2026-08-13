@@ -1,9 +1,68 @@
 import React, { useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { Search, Heart, User, Sparkles, Dices, Loader2, LogOut } from 'lucide-react';
-import { getTrendingMovies, getTrendingTV } from '../../services/tmdb';
 import SearchBar from '../common/SearchBar';
 import { useAuth } from '../../context/AuthContext';
+
+// Curated masterpiece pool — dark thrillers, intense dramas, romantic classics,
+// prestige TV, malayalam cinema, and iconic animation
+const SURPRISE_POOL = [
+  // Dark/Intense Movies
+  { id: 11324,  type: 'movie' }, // Nightcrawler
+  { id: 271110, type: 'movie' }, // Southpaw
+  { id: 807,    type: 'movie' }, // Se7en
+  { id: 27205,  type: 'movie' }, // Inception
+  { id: 103,    type: 'movie' }, // Taxi Driver
+  { id: 769,    type: 'movie' }, // GoodFellas
+  { id: 278,    type: 'movie' }, // The Shawshank Redemption
+  { id: 238,    type: 'movie' }, // The Godfather
+  { id: 240,    type: 'movie' }, // Godfather Part II
+  { id: 424,    type: 'movie' }, // Schindler's List
+  { id: 539,    type: 'movie' }, // Psycho
+  { id: 77,     type: 'movie' }, // Memento
+  { id: 680,    type: 'movie' }, // Pulp Fiction
+  { id: 37724,  type: 'movie' }, // Skyfall
+  { id: 155,    type: 'movie' }, // The Dark Knight
+  { id: 264660, type: 'movie' }, // Ex Machina
+  { id: 694919, type: 'movie' }, // Money Heist film
+  { id: 475557, type: 'movie' }, // Joker
+  { id: 335984, type: 'movie' }, // Blade Runner 2049
+  { id: 600,    type: 'movie' }, // Full Metal Jacket
+  { id: 346364, type: 'movie' }, // It
+  // Romantic classics
+  { id: 313369, type: 'movie' }, // La La Land
+  { id: 43347,  type: 'movie' }, // Love and Other Drugs
+  { id: 296096, type: 'movie' }, // Me Before You
+  { id: 10096,  type: 'movie' }, // 13 Going on 30
+  { id: 4951,   type: 'movie' }, // 10 Things I Hate About You
+  { id: 19913,  type: 'movie' }, // 500 Days of Summer
+  { id: 332562, type: 'movie' }, // A Star Is Born
+  { id: 10591,  type: 'movie' }, // The Girl Next Door
+  { id: 65513,  type: 'movie' }, // Silver Linings Playbook
+  // Malayalam masterpieces
+  { id: 937287, type: 'movie' }, // Meiyazhagan
+  { id: 372058, type: 'movie' }, // Your Name (Japanese, epic)
+  { id: 702,    type: 'movie' }, // The Great Escape
+  // Animation & World Cinema
+  { id: 12477,  type: 'movie' }, // Grave of the Fireflies
+  { id: 129,    type: 'movie' }, // Spirited Away
+  { id: 508442, type: 'movie' }, // Soul
+  { id: 354912, type: 'movie' }, // Coco
+  { id: 315162, type: 'movie' }, // Puss in Boots: The Last Wish
+  // Prestige TV
+  { id: 1396,   type: 'tv' },    // Breaking Bad
+  { id: 60574,  type: 'tv' },    // Better Call Saul
+  { id: 1399,   type: 'tv' },    // Game of Thrones
+  { id: 87108,  type: 'tv' },    // Chernobyl
+  { id: 71446,  type: 'tv' },    // Money Heist
+  { id: 1403,   type: 'tv' },    // Daredevil
+  { id: 1434,   type: 'tv' },    // Narcos
+  { id: 18347,  type: 'tv' },    // The Sopranos
+  { id: 44217,  type: 'tv' },    // The Wire
+  { id: 85552,  type: 'tv' },    // Euphoria
+  { id: 66788,  type: 'tv' },    // Mr. Robot
+  { id: 95396,  type: 'tv' },    // Succession
+];
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -13,20 +72,10 @@ const Navbar = () => {
   const navLinkClass = ({ isActive }) => 
     `text-lg font-medium transition-colors duration-300 ${isActive ? 'text-[var(--color-accent)]' : 'text-gray-300 hover:text-white'}`;
 
-  const handleSurprise = async () => {
+  const handleSurprise = () => {
     if (loading) return;
-    setLoading(true);
-    try {
-      const isMovie = Math.random() > 0.5;
-      const fn = isMovie ? getTrendingMovies : getTrendingTV;
-      const data = await fn('week');
-      const randomItem = data.results[Math.floor(Math.random() * data.results.length)];
-      navigate(`/${isMovie ? 'movie' : 'tv'}/${randomItem.id}`);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
+    const pick = SURPRISE_POOL[Math.floor(Math.random() * SURPRISE_POOL.length)];
+    navigate(`/${pick.type}/${pick.id}`);
   };
 
   return (
