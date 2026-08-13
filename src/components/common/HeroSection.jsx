@@ -7,65 +7,51 @@ const EMOTIONS = [
   {
     key: 'happy',
     Icon: Smile,
-    label: 'Happy',
+    label: 'Happy & Uplifting',
+    sub: 'Comedies & feel-good films',
     color: '#f59e0b',
-    glow: 'rgba(245,158,11,0.6)',
-    gradient: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
-    emoji: '☀️',
   },
   {
     key: 'sad',
     Icon: CloudRain,
     label: 'Melancholic',
+    sub: 'Emotional dramas',
     color: '#60a5fa',
-    glow: 'rgba(96,165,250,0.6)',
-    gradient: 'linear-gradient(135deg, #60a5fa 0%, #2563eb 100%)',
-    emoji: '🌧️',
   },
   {
     key: 'romantic',
     Icon: Heart,
     label: 'Romantic',
+    sub: 'Love stories & romance',
     color: '#f472b6',
-    glow: 'rgba(244,114,182,0.6)',
-    gradient: 'linear-gradient(135deg, #f472b6 0%, #db2777 100%)',
-    emoji: '🌹',
   },
   {
     key: 'excited',
     Icon: Zap,
     label: 'Excited',
+    sub: 'Action & adventure',
     color: '#fb923c',
-    glow: 'rgba(251,146,60,0.6)',
-    gradient: 'linear-gradient(135deg, #fb923c 0%, #ea580c 100%)',
-    emoji: '⚡',
   },
   {
     key: 'scared',
     Icon: Ghost,
     label: 'Thrilled',
+    sub: 'Horror & thrillers',
     color: '#c084fc',
-    glow: 'rgba(192,132,252,0.6)',
-    gradient: 'linear-gradient(135deg, #c084fc 0%, #9333ea 100%)',
-    emoji: '👻',
   },
   {
     key: 'relaxed',
     Icon: Leaf,
     label: 'Relaxed',
+    sub: 'Documentaries & calm films',
     color: '#34d399',
-    glow: 'rgba(52,211,153,0.6)',
-    gradient: 'linear-gradient(135deg, #34d399 0%, #059669 100%)',
-    emoji: '🌿',
   },
   {
     key: 'mind-bending',
     Icon: Aperture,
     label: 'Mind-Bending',
+    sub: 'Sci-Fi & mystery',
     color: '#818cf8',
-    glow: 'rgba(129,140,248,0.6)',
-    gradient: 'linear-gradient(135deg, #818cf8 0%, #4f46e5 100%)',
-    emoji: '🌀',
   },
 ];
 
@@ -179,35 +165,36 @@ const HeroSection = () => {
               <div className="flex-1 h-px bg-gradient-to-r from-white/10 to-transparent"></div>
             </div>
             
-            <div className="flex flex-wrap gap-3 lg:gap-4 justify-center lg:justify-start">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 w-full max-w-xl">
               {EMOTIONS.map((em, i) => (
                 <Link
                   key={em.key}
                   to={`/emotion/${em.key}`}
                   onMouseEnter={() => setHoveredEmotion(em.key)}
                   onMouseLeave={() => setHoveredEmotion(null)}
-                  className="relative group flex items-center gap-3 px-6 py-3.5 rounded-2xl transition-all duration-300"
+                  className="relative group flex flex-col p-4 sm:p-5 rounded-3xl transition-all duration-300 overflow-hidden border border-white/5"
                   style={{
-                    background: em.gradient,
-                    boxShadow: hoveredEmotion === em.key 
-                      ? `0 15px 40px -5px ${em.glow}, inset 0 2px 0 rgba(255,255,255,0.4), inset 0 -3px 0 rgba(0,0,0,0.4)` 
-                      : `0 8px 20px -8px ${em.glow}, inset 0 2px 0 rgba(255,255,255,0.2), inset 0 -3px 0 rgba(0,0,0,0.4)`,
-                    transform: hoveredEmotion === em.key ? 'translateY(-6px) scale(1.04)' : 'none',
-                    animationDelay: `${i * 50}ms`,
+                    backgroundColor: '#121620',
+                    transform: hoveredEmotion === em.key ? 'translateY(-4px)' : 'none',
+                    boxShadow: hoveredEmotion === em.key ? `0 12px 30px -10px ${em.color}30` : '0 4px 6px -1px rgba(0,0,0,0.1)',
                   }}
                 >
-                  {/* Subtle bright overlay on hover */}
-                  <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-300 rounded-2xl pointer-events-none" />
+                  {/* Large soft background radial glow */}
+                  <div 
+                    className="absolute -top-12 -right-12 w-48 h-48 rounded-full blur-[50px] opacity-10 transition-opacity duration-300 group-hover:opacity-30 pointer-events-none"
+                    style={{ backgroundColor: em.color }}
+                  />
 
-                  <em.Icon className="w-6 h-6 text-white drop-shadow-md transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-12" />
-                  
-                  <span className="text-base font-bold text-white tracking-wide drop-shadow-md">
-                    {em.label}
-                  </span>
-                  
-                  <span className="opacity-90 text-xl drop-shadow-md transition-transform duration-300 group-hover:scale-110 group-hover:rotate-12">
-                    {em.emoji}
-                  </span>
+                  {/* Icon Container */}
+                  <div className="relative z-10 w-11 h-11 rounded-2xl bg-white/5 border border-white/5 flex items-center justify-center mb-6 transition-transform duration-300 group-hover:scale-110 group-hover:bg-white/10">
+                    <em.Icon className="w-5 h-5 text-white" />
+                  </div>
+
+                  {/* Text */}
+                  <div className="relative z-10">
+                    <h4 className="text-lg font-bold text-white tracking-tight leading-tight mb-1">{em.label}</h4>
+                    <p className="text-[11px] text-gray-400 font-medium">{em.sub}</p>
+                  </div>
                 </Link>
               ))}
             </div>
