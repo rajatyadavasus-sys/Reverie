@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { X } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
@@ -19,17 +19,28 @@ const AuthModal = ({ onClose }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  // Close on Escape key
+  useEffect(() => {
+    const handleKey = (e) => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [onClose]);
+
   const handleLogin = async () => {
     setLoading(true);
     setError(null);
     try {
       await loginWithGoogle();
-      onClose();
+      onClose(); // success — close modal
     } catch (err) {
-      console.error('Auth error:', err?.code, err?.message);
-      if (err?.code !== 'auth/popup-closed-by-user' && err?.code !== 'auth/cancelled-popup-request') {
-        setError(`Sign in failed: ${err?.code || err?.message || 'Unknown error'}`);
+      const code = err?.code || '';
+      // If user simply closed/cancelled the popup, close the whole modal cleanly
+      if (code === 'auth/popup-closed-by-user' || code === 'auth/cancelled-popup-request') {
+        onClose();
+        return;
       }
+      console.error('Auth error:', code, err?.message);
+      setError(`Sign in failed: ${code || err?.message || 'Unknown error'}`);
     } finally {
       setLoading(false);
     }
@@ -60,10 +71,11 @@ const AuthModal = ({ onClose }) => {
           }}
         />
 
-        {/* Close button */}
+        {/* Close button — always clickable, never disabled */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 z-10 w-8 h-8 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white transition-all"
+          className="absolute top-4 right-4 z-20 w-8 h-8 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/15 text-gray-400 hover:text-white transition-all"
+          style={{ pointerEvents: 'all' }}
         >
           <X className="w-4 h-4" />
         </button>
@@ -77,7 +89,6 @@ const AuthModal = ({ onClose }) => {
             <span className="text-3xl">🎞️</span>
           </div>
 
-          {/* Headline */}
           <h2 className="text-4xl font-black text-white mb-3 tracking-tight">
             Welcome to Reverie
           </h2>
@@ -102,7 +113,7 @@ const AuthModal = ({ onClose }) => {
               <GoogleIcon />
             )}
             <span className="text-[15px]">
-              {loading ? 'Signing in...' : 'Continue with Google'}
+              {loading ? 'Opening Google...' : 'Continue with Google'}
             </span>
           </button>
 
