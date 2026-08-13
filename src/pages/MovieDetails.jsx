@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
 import {
-  getMovieDetails, getSimilarMovies, getMovieCredits, getMovieVideos, getMovieReviews,
-  getTVDetails, getSimilarTVShows, getTVCredits, getTVVideos, getTVReviews,
+  getMovieDetails, getSimilarMovies, getMovieRecommendations, getMovieCredits, getMovieVideos, getMovieReviews,
+  getTVDetails, getSimilarTVShows, getTVRecommendations, getTVCredits, getTVVideos, getTVReviews,
 } from '../services/tmdb';
 import TMDBReviews from '../components/details/TMDBReviews';
 import LoadingSpinner from '../components/common/LoadingSpinner';
@@ -66,29 +66,31 @@ const MediaDetails = () => {
       window.scrollTo(0, 0);
       try {
         if (isTV) {
-          const [details, sim, credits, videos, reviewsData] = await Promise.all([
+          const [details, recs, sim, credits, videos, reviewsData] = await Promise.all([
             getTVDetails(id),
+            getTVRecommendations(id),
             getSimilarTVShows(id),
             getTVCredits(id),
             getTVVideos(id),
             getTVReviews(id),
           ]);
           setMedia(details);
-          setSimilar(sim.results || []);
+          setSimilar(recs.results?.length > 0 ? recs.results : (sim.results || []));
           setCast(credits.cast || []);
           setTmdbReviews(reviewsData.results || []);
           const trailer = pickTrailer(videos.results);
           if (trailer) setTrailerKey(trailer.key);
         } else {
-          const [details, sim, credits, videos, reviewsData] = await Promise.all([
+          const [details, recs, sim, credits, videos, reviewsData] = await Promise.all([
             getMovieDetails(id),
+            getMovieRecommendations(id),
             getSimilarMovies(id),
             getMovieCredits(id),
             getMovieVideos(id),
             getMovieReviews(id),
           ]);
           setMedia(details);
-          setSimilar(sim.results || []);
+          setSimilar(recs.results?.length > 0 ? recs.results : (sim.results || []));
           setCast(credits.cast || []);
           setTmdbReviews(reviewsData.results || []);
           const trailer = pickTrailer(videos.results);
@@ -421,7 +423,7 @@ const MediaDetails = () => {
             key={id}
             initialItems={similar}
             mediaType={isTV ? 'tv' : 'movie'}
-            fetchMore={page => isTV ? getSimilarTVShows(id, page) : getSimilarMovies(id, page)}
+            fetchMore={page => isTV ? getTVRecommendations(id, page) : getMovieRecommendations(id, page)}
           />
         </div>
       )}

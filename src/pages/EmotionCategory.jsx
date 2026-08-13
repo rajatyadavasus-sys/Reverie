@@ -35,6 +35,7 @@ const EMOTION_MAP = {
   romantic: {
     movieGenres: '10749',
     tvGenres: '10749',
+    withoutGenres: '16', // Exclude animation from romantic
     label: 'Romantic',
     sub: 'Love stories & romance',
     Icon: Heart,
@@ -43,6 +44,7 @@ const EMOTION_MAP = {
     accent: 'text-pink-400',
     border: 'border-pink-500/20',
     sectionColor: 'border-pink-500',
+    customInjectMovie: [313369, 43347, 296096, 10096, 11252, 4951, 19973], // Classic Romantics
     hexColor: '#f472b6',
   },
   excited: {
