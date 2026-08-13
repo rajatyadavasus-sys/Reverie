@@ -1,37 +1,64 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useAuth } from './AuthContext';
+import { db } from '../config/firebase';
+import { doc, onSnapshot, setDoc } from 'firebase/firestore';
 
 const WatchlistContext = createContext();
 
 export const WatchlistProvider = ({ children }) => {
-  const [watchlist, setWatchlist] = useState(() => {
-    try {
-      const item = window.localStorage.getItem('feelflix-watchlist');
-      return item ? JSON.parse(item) : [];
-    } catch (error) {
-      console.error("Error reading watchlist from local storage:", error);
-      return [];
-    }
-  });
+  const { currentUser, loginWithGoogle } = useAuth();
+  const [watchlist, setWatchlist] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    try {
-      window.localStorage.setItem('feelflix-watchlist', JSON.stringify(watchlist));
-    } catch (error) {
-      console.error("Error saving watchlist to local storage:", error);
+    if (!currentUser) {
+      setWatchlist([]);
+      setLoading(false);
+      return;
     }
-  }, [watchlist]);
+
+    const docRef = doc(db, 'users', currentUser.uid);
+    const unsubscribe = onSnapshot(docRef, (docSnap) => {
+      if (docSnap.exists() && docSnap.data().watchlist) {
+        setWatchlist(docSnap.data().watchlist);
+      } else {
+        setWatchlist([]);
+      }
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, [currentUser]);
+
+  const updateFirebase = async (newList) => {
+    if (!currentUser) return;
+    try {
+      await setDoc(doc(db, 'users', currentUser.uid), { watchlist: newList }, { merge: true });
+    } catch (err) {
+      console.error("Error updating watchlist in Firebase:", err);
+    }
+  };
 
   const addToWatchlist = (media) => {
-    setWatchlist((prev) => {
-      if (prev.find((item) => item.id === media.id && item.media_type === media.media_type)) {
-        return prev;
-      }
-      return [...prev, media];
-    });
+    if (!currentUser) {
+      alert("Please Sign In to save movies to your watchlist!");
+      loginWithGoogle();
+      return;
+    }
+    
+    if (watchlist.find((item) => item.id === media.id && item.media_type === media.media_type)) {
+      return;
+    }
+    const newList = [...watchlist, media];
+    setWatchlist(newList);
+    updateFirebase(newList);
   };
 
   const removeFromWatchlist = (id, media_type) => {
-    setWatchlist((prev) => prev.filter((item) => !(item.id === id && item.media_type === media_type)));
+    if (!currentUser) return;
+    const newList = watchlist.filter((item) => !(item.id === id && item.media_type === media_type));
+    setWatchlist(newList);
+    updateFirebase(newList);
   };
 
   const isInWatchlist = (id, media_type) => {

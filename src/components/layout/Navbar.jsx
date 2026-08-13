@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
-import { Search, Heart, User, Sparkles, Dices, Loader2 } from 'lucide-react';
+import { Search, Heart, User, Sparkles, Dices, Loader2, LogOut } from 'lucide-react';
 import { getTrendingMovies, getTrendingTV } from '../../services/tmdb';
 import SearchBar from '../common/SearchBar';
+import { useAuth } from '../../context/AuthContext';
 
 const Navbar = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const { currentUser, loginWithGoogle, logout } = useAuth();
 
   const navLinkClass = ({ isActive }) => 
     `text-lg font-medium transition-colors duration-300 ${isActive ? 'text-[var(--color-accent)]' : 'text-gray-300 hover:text-white'}`;
@@ -67,9 +69,42 @@ const Navbar = () => {
           <Link to="/watchlist" className="text-gray-300 hover:text-white transition-colors p-2 hover:bg-white/5 rounded-full">
             <Heart className="w-6 h-6" />
           </Link>
-          <button className="flex items-center justify-center w-12 h-12 rounded-full bg-white/5 text-gray-300 hover:bg-white/10 hover:text-white transition-colors border border-white/10 ml-2">
-            <User className="w-5 h-5" />
-          </button>
+          
+          {currentUser ? (
+            <div className="relative group ml-2">
+              <button className="flex items-center justify-center w-10 h-10 rounded-full bg-white/10 text-white overflow-hidden border border-white/20 transition-all hover:scale-105">
+                {currentUser.photoURL ? (
+                  <img src={currentUser.photoURL} alt={currentUser.displayName} className="w-full h-full object-cover" />
+                ) : (
+                  <User className="w-5 h-5" />
+                )}
+              </button>
+              {/* Dropdown */}
+              <div className="absolute right-0 mt-2 w-48 bg-[#171C2A] border border-white/10 rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
+                <div className="p-3 border-b border-white/5">
+                  <p className="text-white text-sm font-semibold truncate">{currentUser.displayName}</p>
+                  <p className="text-gray-400 text-xs truncate">{currentUser.email}</p>
+                </div>
+                <div className="p-2">
+                  <button
+                    onClick={logout}
+                    className="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    Sign Out
+                  </button>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <button 
+              onClick={loginWithGoogle}
+              className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors border border-white/20 ml-2 font-semibold text-sm"
+            >
+              <User className="w-4 h-4" />
+              Sign In
+            </button>
+          )}
         </div>
       </div>
     </nav>

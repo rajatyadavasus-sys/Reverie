@@ -1,4 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useAuth } from './AuthContext';
+import { db } from '../config/firebase';
+import { doc, onSnapshot, setDoc } from 'firebase/firestore';
 
 const ReviewContext = createContext();
 
@@ -6,35 +9,65 @@ const ReviewContext = createContext();
 // { id, media_type, title, poster_path, tag, opinion, createdAt }
 
 export const ReviewProvider = ({ children }) => {
-  const [reviews, setReviews] = useState(() => {
-    try {
-      const item = window.localStorage.getItem('feelflix-reviews');
-      return item ? JSON.parse(item) : [];
-    } catch {
-      return [];
-    }
-  });
+  const { currentUser, loginWithGoogle } = useAuth();
+  const [reviews, setReviews] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    try {
-      window.localStorage.setItem('feelflix-reviews', JSON.stringify(reviews));
-    } catch (err) {
-      console.error(err);
+    if (!currentUser) {
+      setReviews([]);
+      setLoading(false);
+      return;
     }
-  }, [reviews]);
+
+    const docRef = doc(db, 'users', currentUser.uid);
+    const unsubscribe = onSnapshot(docRef, (docSnap) => {
+      if (docSnap.exists() && docSnap.data().reviews) {
+        setReviews(docSnap.data().reviews);
+      } else {
+        setReviews([]);
+      }
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, [currentUser]);
+
+  const updateFirebase = async (newList) => {
+    if (!currentUser) return;
+    try {
+      await setDoc(doc(db, 'users', currentUser.uid), { reviews: newList }, { merge: true });
+    } catch (err) {
+      console.error("Error updating reviews in Firebase:", err);
+    }
+  };
 
   const addReview = (review) => {
-    setReviews(prev => {
-      // Replace existing review for same title
-      const filtered = prev.filter(
-        r => !(r.id === review.id && r.media_type === review.media_type)
-      );
-      return [{ ...review, createdAt: new Date().toISOString() }, ...filtered];
-    });
+    if (!currentUser) {
+      alert("Please Sign In to save reviews!");
+      loginWithGoogle();
+      return;
+    }
+
+    const newReview = {
+      ...review,
+      createdAt: new Date().toISOString()
+    };
+
+    const filtered = reviews.filter(
+      r => !(r.id === newReview.id && r.media_type === newReview.media_type)
+    );
+    
+    const newList = [newReview, ...filtered];
+    setReviews(newList);
+    updateFirebase(newList);
   };
 
   const removeReview = (id, media_type) => {
-    setReviews(prev => prev.filter(r => !(r.id === id && r.media_type === media_type)));
+    if (!currentUser) return;
+    const newList = reviews.filter(r => !(r.id === id && r.media_type === media_type));
+    setReviews(newList);
+    updateFirebase(newList);
   };
 
   const getReview = (id, media_type) =>
