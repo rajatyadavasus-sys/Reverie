@@ -52,7 +52,7 @@ const Navbar = () => {
           <button 
             onClick={handleSurprise}
             disabled={loading}
-            className="hidden sm:flex items-center gap-2 px-4 py-2.5 rounded-full bg-gradient-to-r from-purple-500/20 to-pink-500/20 hover:from-purple-500/30 hover:to-pink-500/30 border border-purple-500/30 text-white font-semibold transition-all hover:scale-105 disabled:opacity-50"
+            className="hidden sm:flex items-center gap-2 px-4 py-2.5 rounded-full bg-gradient-to-r from-purple-500/20 to-pink-500/20 hover:from-purple-500/30 hover:to-pink-500/30 border border-purple-500/30 text-white font-semibold transition-all hover:scale-105 disabled:opacity-50 whitespace-nowrap"
           >
             {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Dices className="w-5 h-5 text-pink-400" />}
             Surprise Me
@@ -99,7 +99,7 @@ const Navbar = () => {
           ) : (
             <button 
               onClick={promptLogin}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors border border-white/20 font-semibold text-sm"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors border border-white/20 font-semibold text-sm whitespace-nowrap"
             >
               <User className="w-4 h-4" />
               Sign In
