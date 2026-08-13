@@ -25,7 +25,10 @@ const AuthModal = ({ onClose }) => {
       await loginWithGoogle();
       onClose(); // close on success
     } catch (err) {
-      setError("Sign in failed. Please try again.");
+      // Don't show error if user just closed the popup themselves
+      if (err?.code !== 'auth/popup-closed-by-user' && err?.code !== 'auth/cancelled-popup-request') {
+        setError("Sign in failed. Please try again.");
+      }
     } finally {
       setLoading(false);
     }
