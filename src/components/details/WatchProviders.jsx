@@ -5,24 +5,60 @@ import { Tv, ShoppingCart, ExternalLink } from 'lucide-react';
 // Priority order: Indian platforms first, then global
 const REGION_PRIORITY = ['IN', 'US', 'GB'];
 
-const ProviderLogo = ({ provider, size = 'md' }) => {
+// Direct deep-link URLs for major streaming platforms
+const PROVIDER_URLS = {
+  // Indian platforms
+  8:    'https://www.netflix.com',
+  9:    'https://www.amazon.com/prime-video',
+  2:    'https://tv.apple.com',
+  337:  'https://www.disneyplus.com',        // Disney+
+  122:  'https://www.hotstar.com',            // Hotstar
+  1853: 'https://www.jiocinema.com',
+  220:  'https://www.zee5.com',
+  11:   'https://www.mxplayer.in',
+  218:  'https://www.sonyliv.com',
+  2336: 'https://www.erosnow.com',
+  392:  'https://www.sunnxt.com',
+  // Global
+  15:   'https://www.hulu.com',
+  384:  'https://www.hbomax.com',
+  387:  'https://www.peacocktv.com',
+  386:  'https://www.peacocktv.com',
+  531:  'https://www.paramountplus.com',
+  350:  'https://www.apple.com/apple-tv-plus',
+  283:  'https://www.crunchyroll.com',
+  43:   'https://www.starz.com',
+  257:  'https://www.fubo.tv',
+  300:  'https://www.showtime.com',
+};
+
+const getProviderUrl = (providerId, tmdbLink) =>
+  PROVIDER_URLS[providerId] || tmdbLink || 'https://www.themoviedb.org';
+
+const ProviderLogo = ({ provider, tmdbLink, size = 'md' }) => {
   const sizeClass = size === 'sm' ? 'w-10 h-10' : 'w-12 h-12';
+  const url = getProviderUrl(provider.provider_id, tmdbLink);
   return (
-    <div className="relative group/logo">
+    <a
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="relative group/logo"
+      title={`Watch on ${provider.provider_name}`}
+    >
       <img
         src={`https://image.tmdb.org/t/p/original${provider.logo_path}`}
         alt={provider.provider_name}
-        className={`${sizeClass} rounded-xl object-cover border border-white/10 transition-transform group-hover/logo:scale-110`}
-        title={provider.provider_name}
+        className={`${sizeClass} rounded-xl object-cover border border-white/10 transition-all duration-200 group-hover/logo:scale-110 group-hover/logo:border-white/30 group-hover/logo:shadow-lg`}
       />
       <div className="absolute -bottom-7 left-1/2 -translate-x-1/2 whitespace-nowrap bg-black/90 text-white text-[10px] px-2 py-1 rounded-md opacity-0 group-hover/logo:opacity-100 transition-opacity pointer-events-none z-10">
         {provider.provider_name}
       </div>
-    </div>
+    </a>
   );
 };
 
-const ProviderSection = ({ title, providers, icon: Icon, color }) => {
+const ProviderSection = ({ title, providers, icon: Icon, color, tmdbLink }) => {
   if (!providers?.length) return null;
   return (
     <div className="mb-6 last:mb-0">
@@ -32,12 +68,13 @@ const ProviderSection = ({ title, providers, icon: Icon, color }) => {
       </div>
       <div className="flex flex-wrap gap-3">
         {providers.map(p => (
-          <ProviderLogo key={p.provider_id} provider={p} />
+          <ProviderLogo key={p.provider_id} provider={p} tmdbLink={tmdbLink} />
         ))}
       </div>
     </div>
   );
 };
+
 
 const WatchProviders = ({ id, mediaType }) => {
   const [providers, setProviders] = useState(null);
@@ -127,24 +164,28 @@ const WatchProviders = ({ id, mediaType }) => {
             providers={providers?.flatrate}
             icon={Tv}
             color="text-green-400"
+            tmdbLink={tmdbLink}
           />
           <ProviderSection
             title="Free / Ad-supported"
             providers={[...(providers?.ads || []), ...(providers?.free || [])]}
             icon={Tv}
             color="text-blue-400"
+            tmdbLink={tmdbLink}
           />
           <ProviderSection
             title="Buy"
             providers={providers?.buy}
             icon={ShoppingCart}
             color="text-yellow-400"
+            tmdbLink={tmdbLink}
           />
           <ProviderSection
             title="Rent"
             providers={providers?.rent}
             icon={ShoppingCart}
             color="text-orange-400"
+            tmdbLink={tmdbLink}
           />
         </div>
       )}
