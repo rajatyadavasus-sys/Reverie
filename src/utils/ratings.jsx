@@ -2,7 +2,7 @@ import React from 'react';
 import * as Icons from 'lucide-react';
 
 /**
- * Calculates a human-readable FeelFlix review tag.
+ * Calculates a human-readable Reverie review tag.
  * Considers BOTH rating AND vote count to avoid mislabelling
  * movies that are too new or have very few votes.
  *

@@ -230,7 +230,7 @@ const MediaDetails = () => {
               )}
             </div>
 
-            {/* FeelFlix Review Tag */}
+            {/* Reverie Review Tag */}
             <div className="flex justify-center lg:justify-start mb-8">
               <ReviewTag voteAverage={media.vote_average} voteCount={media.vote_count} />
             </div>

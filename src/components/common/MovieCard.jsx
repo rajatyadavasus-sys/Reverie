@@ -53,7 +53,7 @@ const MovieCard = ({ item, mediaType = 'movie' }) => {
         <div className="p-5 flex flex-col flex-grow gap-3">
           <h3 className="font-semibold text-base text-white line-clamp-1 leading-snug">{title}</h3>
 
-          {/* FeelFlix Tag */}
+          {/* Reverie Tag */}
           <div className={`self-start inline-flex items-center gap-1.5 px-3 py-1 rounded-full border text-xs font-bold uppercase tracking-wide ${tagColors}`}>
             <ReviewIcon iconName={tag.icon} className="w-3.5 h-3.5" />
             <span>{tag.label}</span>
