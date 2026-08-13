@@ -11,32 +11,40 @@ const TAGS = [
     icon: 'Trophy',
     label: 'Masterpiece',
     desc: 'An absolute gem. One for the ages.',
-    colors: 'border-yellow-500 bg-yellow-500/10 text-yellow-400',
-    selectedColors: 'border-yellow-400 bg-yellow-500/25 text-yellow-300 ring-2 ring-yellow-500/40',
+    border: 'border-yellow-500/30 hover:border-yellow-400',
+    text: 'text-yellow-400',
+    selectedBg: 'bg-yellow-500/20 ring-4 ring-yellow-500/30 shadow-[0_0_30px_rgba(234,179,8,0.3)]',
+    gradient: 'from-yellow-500/20 to-orange-500/10',
   },
   {
     key: 'must-watch',
     icon: 'ThumbsUp',
     label: 'Must Watch',
     desc: 'Highly recommend. Don\'t miss it.',
-    colors: 'border-green-500 bg-green-500/10 text-green-400',
-    selectedColors: 'border-green-400 bg-green-500/25 text-green-300 ring-2 ring-green-500/40',
+    border: 'border-green-500/30 hover:border-green-400',
+    text: 'text-green-400',
+    selectedBg: 'bg-green-500/20 ring-4 ring-green-500/30 shadow-[0_0_30px_rgba(34,197,94,0.3)]',
+    gradient: 'from-green-500/20 to-emerald-500/10',
   },
   {
     key: 'timepass',
     icon: 'Coffee',
     label: 'Timepass',
     desc: 'Decent. Good for a lazy evening.',
-    colors: 'border-blue-500 bg-blue-500/10 text-blue-400',
-    selectedColors: 'border-blue-400 bg-blue-500/25 text-blue-300 ring-2 ring-blue-500/40',
+    border: 'border-blue-500/30 hover:border-blue-400',
+    text: 'text-blue-400',
+    selectedBg: 'bg-blue-500/20 ring-4 ring-blue-500/30 shadow-[0_0_30px_rgba(59,130,246,0.3)]',
+    gradient: 'from-blue-500/20 to-cyan-500/10',
   },
   {
     key: 'skip',
     icon: 'XCircle',
     label: 'Skip',
     desc: 'Save your time. Not worth it.',
-    colors: 'border-red-500 bg-red-500/10 text-red-400',
-    selectedColors: 'border-red-400 bg-red-500/25 text-red-300 ring-2 ring-red-500/40',
+    border: 'border-red-500/30 hover:border-red-400',
+    text: 'text-red-400',
+    selectedBg: 'bg-red-500/20 ring-4 ring-red-500/30 shadow-[0_0_30px_rgba(239,68,68,0.3)]',
+    gradient: 'from-red-500/20 to-rose-500/10',
   },
 ];
 
@@ -138,17 +146,27 @@ const ReviewModal = ({ media, mediaType, onClose }) => {
                     <button
                       key={tag.key}
                       onClick={() => setSelectedTag(tag.key)}
-                      className={`flex flex-col items-start gap-2 p-5 rounded-2xl border-2 text-left transition-all duration-200 hover:-translate-y-0.5 ${
-                        isSelected ? tag.selectedColors : `${tag.colors} hover:brightness-110`
+                      className={`group relative overflow-hidden flex flex-col items-start p-6 rounded-3xl border-2 text-left transition-all duration-300 z-10 ${
+                        isSelected 
+                          ? `${tag.border} ${tag.selectedBg} scale-[1.02] -translate-y-1` 
+                          : `bg-[#131824] ${tag.border} hover:-translate-y-1.5 hover:scale-[1.02] hover:shadow-xl`
                       }`}
                     >
-                      <div className="w-8 h-8 flex items-center justify-center bg-white/10 rounded-full mb-1">
-                        <ReviewIcon iconName={tag.icon} className="w-4 h-4" />
+                      {/* Ambient glowing bg on hover or active */}
+                      <div className={`absolute inset-0 bg-gradient-to-br ${tag.gradient} opacity-0 transition-opacity duration-500 ${isSelected ? 'opacity-100' : 'group-hover:opacity-100'}`}></div>
+                      
+                      {/* Inner Content */}
+                      <div className="relative z-20 w-full">
+                        <div className={`inline-flex items-center justify-center w-12 h-12 rounded-xl bg-white/5 border border-white/10 mb-4 transition-all duration-500 transform ${isSelected ? 'bg-white/10 border-white/20 scale-110 shadow-lg' : 'group-hover:bg-white/10 group-hover:border-white/20 group-hover:scale-110 group-hover:shadow-lg'}`}>
+                          <ReviewIcon iconName={tag.icon} className={`w-6 h-6 text-white drop-shadow-md transition-transform duration-500 ${isSelected ? 'scale-110' : 'group-hover:scale-110'}`} />
+                        </div>
+                        <span className={`block font-extrabold text-xl mb-1 ${tag.text} tracking-tight transition-all duration-300 ${isSelected ? 'tracking-wide' : 'group-hover:tracking-wide'}`}>
+                          {tag.label}
+                        </span>
+                        <span className="block text-sm text-gray-400 font-medium leading-relaxed group-hover:text-gray-200 transition-colors duration-300">
+                          {tag.desc}
+                        </span>
                       </div>
-                      <span className="font-bold text-lg">{tag.label}</span>
-                      <span className="text-xs opacity-70 leading-relaxed font-medium">
-                        {tag.desc}
-                      </span>
                     </button>
                   );
                 })}
