@@ -32,7 +32,7 @@ export const getTrendingTV     = (timeWindow = 'day') => fetchFromTMDB(`/trendin
 export const getMovieDetails = (id) => fetchFromTMDB(`/movie/${id}`);
 export const getMovieVideos = (id) => fetchFromTMDB(`/movie/${id}/videos`);
 export const getMovieCredits = (id) => fetchFromTMDB(`/movie/${id}/credits`);
-export const getSimilarMovies = (id) => fetchFromTMDB(`/movie/${id}/similar`);
+export const getSimilarMovies = (id, page = 1) => fetchFromTMDB(`/movie/${id}/similar?page=${page}`);
 export const getPopularMovies = () => fetchFromTMDB(`/movie/popular`);
 export const getTopRatedMovies = () => fetchFromTMDB(`/movie/top_rated`);
 export const getNowPlayingMovies = () => fetchFromTMDB(`/movie/now_playing`);
@@ -42,7 +42,7 @@ export const getUpcomingMovies = () => fetchFromTMDB(`/movie/upcoming`);
 export const getTVDetails          = (id)           => fetchFromTMDB(`/tv/${id}`);
 export const getTVVideos           = (id)           => fetchFromTMDB(`/tv/${id}/videos`);
 export const getTVCredits          = (id)           => fetchFromTMDB(`/tv/${id}/credits`);
-export const getSimilarTVShows     = (id)           => fetchFromTMDB(`/tv/${id}/similar`);
+export const getSimilarTVShows     = (id, page = 1) => fetchFromTMDB(`/tv/${id}/similar?page=${page}`);
 export const getTVSeason           = (seriesId, seasonNumber) => fetchFromTMDB(`/tv/${seriesId}/season/${seasonNumber}?append_to_response=aggregate_credits,credits`);
 export const getTVSeasonVideos     = (seriesId, seasonNumber) => fetchFromTMDB(`/tv/${seriesId}/season/${seasonNumber}/videos`);
 export const getTVRecommendations  = (id)           => fetchFromTMDB(`/tv/${id}/recommendations`);

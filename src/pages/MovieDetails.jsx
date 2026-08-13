@@ -6,6 +6,7 @@ import {
 } from '../services/tmdb';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import MovieCard from '../components/common/MovieCard';
+import LoadMoreGrid from '../components/common/LoadMoreGrid';
 import SeasonAccordion from '../components/details/SeasonAccordion';
 import ReviewModal from '../components/details/ReviewModal';
 import WatchProviders from '../components/details/WatchProviders';
@@ -70,7 +71,7 @@ const MediaDetails = () => {
             getTVVideos(id),
           ]);
           setMedia(details);
-          setSimilar(sim.results.slice(0, 5));
+          setSimilar(sim.results || []);
           setCast(credits.cast || []);
           const trailer = pickTrailer(videos.results);
           if (trailer) setTrailerKey(trailer.key);
@@ -82,7 +83,7 @@ const MediaDetails = () => {
             getMovieVideos(id),
           ]);
           setMedia(details);
-          setSimilar(sim.results.slice(0, 5));
+          setSimilar(sim.results || []);
           setCast(credits.cast || []);
           const trailer = pickTrailer(videos.results);
           if (trailer) setTrailerKey(trailer.key);
@@ -407,11 +408,12 @@ const MediaDetails = () => {
           <h2 className="text-3xl font-bold text-white mb-10">
             You might also feel
           </h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
-            {similar.map(item => (
-              <MovieCard key={item.id} item={item} mediaType={mediaType} />
-            ))}
-          </div>
+          <LoadMoreGrid 
+            key={id}
+            initialItems={similar}
+            mediaType={isTV ? 'tv' : 'movie'}
+            fetchMore={page => isTV ? getSimilarTVShows(id, page) : getSimilarMovies(id, page)}
+          />
         </div>
       )}
     </div>
