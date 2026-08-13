@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import LoadMoreGrid from '../components/common/LoadMoreGrid';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import { Smile, CloudRain, Heart, Zap, Ghost, Leaf, Aperture } from 'lucide-react';
@@ -175,7 +175,27 @@ const EmotionCategory = () => {
             <em.Icon className={`w-24 h-24 ${em.accent} drop-shadow-2xl`} />
           </div>
           <h1 className={`text-5xl md:text-7xl font-black mb-6 ${em.accent}`}>{em.label}</h1>
-          <p className="text-gray-300 text-xl max-w-2xl mx-auto leading-relaxed">{em.description}</p>
+          <p className="text-gray-300 text-xl max-w-2xl mx-auto leading-relaxed mb-12">{em.description}</p>
+          
+          {/* Quick Mood Switcher */}
+          <div className="flex flex-col items-center justify-center pt-8 border-t border-white/10 max-w-4xl mx-auto">
+            <p className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-6">Want to feel something else?</p>
+            <div className="flex flex-wrap justify-center gap-3 md:gap-4">
+              {Object.entries(EMOTION_MAP).map(([key, data]) => {
+                if (key === emotion) return null;
+                return (
+                  <Link
+                    key={key}
+                    to={`/emotion/${key}`}
+                    className={`flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#121620] hover:bg-white/10 border ${data.border} transition-all hover:-translate-y-1 hover:shadow-lg`}
+                  >
+                    <data.Icon className={`w-4 h-4 ${data.accent}`} />
+                    <span className="text-sm font-semibold text-white tracking-wide">{data.label}</span>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
         </div>
       </div>
 
