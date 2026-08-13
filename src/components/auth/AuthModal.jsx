@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { X } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
@@ -25,7 +26,7 @@ const AuthModal = ({ onClose }) => {
       await loginWithGoogle();
       onClose();
     } catch (err) {
-      console.error("Auth error:", err?.code, err?.message);
+      console.error('Auth error:', err?.code, err?.message);
       if (err?.code !== 'auth/popup-closed-by-user' && err?.code !== 'auth/cancelled-popup-request') {
         setError(`Sign in failed: ${err?.code || err?.message || 'Unknown error'}`);
       }
@@ -34,21 +35,29 @@ const AuthModal = ({ onClose }) => {
     }
   };
 
-  return (
+  const modal = (
     <div
-      className="fixed inset-0 z-[200] flex items-center justify-center p-4"
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-4"
       style={{ backdropFilter: 'blur(12px)', backgroundColor: 'rgba(0,0,0,0.75)' }}
       onClick={onClose}
     >
       <div
         className="relative w-full max-w-md rounded-3xl overflow-hidden"
-        style={{ background: 'linear-gradient(160deg, #1a1f30 0%, #12172290 100%)', border: '1px solid rgba(255,255,255,0.08)', boxShadow: '0 40px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.04)' }}
+        style={{
+          background: 'linear-gradient(160deg, #1a1f30 0%, #121722 100%)',
+          border: '1px solid rgba(255,255,255,0.08)',
+          boxShadow: '0 40px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.04)',
+        }}
         onClick={e => e.stopPropagation()}
       >
         {/* Ambient purple glow */}
         <div
-          className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-32 rounded-full opacity-40 pointer-events-none"
-          style={{ background: 'radial-gradient(ellipse, #aa3bff 0%, transparent 70%)', filter: 'blur(20px)', transform: 'translateX(-50%) translateY(-40%)' }}
+          className="absolute top-0 left-1/2 w-64 h-32 rounded-full opacity-40 pointer-events-none"
+          style={{
+            background: 'radial-gradient(ellipse, #aa3bff 0%, transparent 70%)',
+            filter: 'blur(20px)',
+            transform: 'translateX(-50%) translateY(-40%)',
+          }}
         />
 
         {/* Close button */}
@@ -108,6 +117,8 @@ const AuthModal = ({ onClose }) => {
       </div>
     </div>
   );
+
+  return createPortal(modal, document.body);
 };
 
 export default AuthModal;
