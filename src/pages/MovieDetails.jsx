@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
 import {
-  getMovieDetails, getSimilarMovies, getMovieCredits, getMovieVideos,
-  getTVDetails, getSimilarTVShows, getTVCredits, getTVVideos,
+  getMovieDetails, getSimilarMovies, getMovieCredits, getMovieVideos, getMovieReviews,
+  getTVDetails, getSimilarTVShows, getTVCredits, getTVVideos, getTVReviews,
 } from '../services/tmdb';
+import TMDBReviews from '../components/details/TMDBReviews';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import MovieCard from '../components/common/MovieCard';
 import LoadMoreGrid from '../components/common/LoadMoreGrid';
@@ -50,6 +51,7 @@ const MediaDetails = () => {
   const [similar, setSimilar] = useState([]);
   const [cast, setCast] = useState([]);
   const [trailerKey, setTrailerKey] = useState(null);
+  const [tmdbReviews, setTmdbReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showTrailer, setShowTrailer] = useState(false);
 
@@ -64,27 +66,31 @@ const MediaDetails = () => {
       window.scrollTo(0, 0);
       try {
         if (isTV) {
-          const [details, sim, credits, videos] = await Promise.all([
+          const [details, sim, credits, videos, reviewsData] = await Promise.all([
             getTVDetails(id),
             getSimilarTVShows(id),
             getTVCredits(id),
             getTVVideos(id),
+            getTVReviews(id),
           ]);
           setMedia(details);
           setSimilar(sim.results || []);
           setCast(credits.cast || []);
+          setTmdbReviews(reviewsData.results || []);
           const trailer = pickTrailer(videos.results);
           if (trailer) setTrailerKey(trailer.key);
         } else {
-          const [details, sim, credits, videos] = await Promise.all([
+          const [details, sim, credits, videos, reviewsData] = await Promise.all([
             getMovieDetails(id),
             getSimilarMovies(id),
             getMovieCredits(id),
             getMovieVideos(id),
+            getMovieReviews(id),
           ]);
           setMedia(details);
           setSimilar(sim.results || []);
           setCast(credits.cast || []);
+          setTmdbReviews(reviewsData.results || []);
           const trailer = pickTrailer(videos.results);
           if (trailer) setTrailerKey(trailer.key);
         }
@@ -401,6 +407,9 @@ const MediaDetails = () => {
           <SeasonAccordion seasons={media.seasons} tvId={media.id} />
         </div>
       )}
+
+      {/* TMDB Reviews */}
+      <TMDBReviews reviews={tmdbReviews} />
 
       {/* Similar titles */}
       {similar.length > 0 && (
