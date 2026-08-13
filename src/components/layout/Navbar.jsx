@@ -48,7 +48,7 @@ const Navbar = () => {
           <NavLink to="/emotions" className={navLinkClass}>Emotions</NavLink>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3 md:gap-6">
           <button 
             onClick={handleSurprise}
             disabled={loading}
@@ -58,7 +58,7 @@ const Navbar = () => {
             Surprise Me
           </button>
           
-          <div className="w-px h-8 bg-white/10 mx-2 hidden sm:block"></div>
+          <div className="w-px h-8 bg-white/10 hidden sm:block"></div>
 
           <SearchBar />
           
@@ -71,7 +71,7 @@ const Navbar = () => {
           </Link>
           
           {currentUser ? (
-            <div className="relative group ml-2">
+            <div className="relative group">
               <button className="flex items-center justify-center w-10 h-10 rounded-full bg-white/10 text-white overflow-hidden border border-white/20 transition-all hover:scale-105">
                 {currentUser.photoURL ? (
                   <img src={currentUser.photoURL} alt={currentUser.displayName} className="w-full h-full object-cover" />
@@ -99,7 +99,7 @@ const Navbar = () => {
           ) : (
             <button 
               onClick={promptLogin}
-              className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors border border-white/20 ml-2 font-semibold text-sm"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors border border-white/20 font-semibold text-sm"
             >
               <User className="w-4 h-4" />
               Sign In
