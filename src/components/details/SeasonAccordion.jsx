@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { ChevronDown, ChevronUp, Calendar, Clock, Tv, User } from 'lucide-react';
-import { getTVSeason } from '../../services/tmdb';
+import { ChevronDown, ChevronUp, Calendar, Clock, Tv, User, PlayCircle } from 'lucide-react';
+import { getTVSeason, getTVSeasonVideos } from '../../services/tmdb';
+import TrailerModal from './TrailerModal';
 
 const EpisodeCard = ({ episode }) => {
   const [expanded, setExpanded] = useState(false);
@@ -128,6 +129,7 @@ const SeasonAccordion = ({ seasons = [], tvId }) => {
   const [openSeason, setOpenSeason]   = useState(null);
   const [seasonData, setSeasonData]   = useState({});
   const [loadingEps, setLoadingEps]   = useState({});
+  const [activeTrailer, setActiveTrailer] = useState(null);
 
   const toggleSeason = async (seasonNumber) => {
     if (openSeason === seasonNumber) {
@@ -141,12 +143,27 @@ const SeasonAccordion = ({ seasons = [], tvId }) => {
 
     setLoadingEps(prev => ({ ...prev, [seasonNumber]: true }));
     try {
-      const data = await getTVSeason(tvId, seasonNumber);
+      const [data, videos] = await Promise.all([
+        getTVSeason(tvId, seasonNumber),
+        getTVSeasonVideos(tvId, seasonNumber).catch(() => ({ results: [] })),
+      ]);
+      
+      const priority = ['Trailer', 'Teaser', 'Clip'];
+      let bestTrailer = null;
+      if (videos?.results?.length) {
+        for (const type of priority) {
+          const found = videos.results.filter(v => v.site === 'YouTube' && v.type === type);
+          if (found.length) { bestTrailer = found[0]; break; }
+        }
+        if (!bestTrailer) bestTrailer = videos.results.find(v => v.site === 'YouTube');
+      }
+
       setSeasonData(prev => ({
         ...prev,
         [seasonNumber]: {
           episodes: data.episodes || [],
           cast: data.credits?.cast || data.aggregate_credits?.cast || [],
+          trailerKey: bestTrailer?.key || null,
         },
       }));
     } catch (err) {
@@ -197,7 +214,17 @@ const SeasonAccordion = ({ seasons = [], tvId }) => {
 
               {/* Meta */}
               <div className="flex-1 min-w-0">
-                <h3 className="text-white font-bold text-lg">{season.name}</h3>
+                <div className="flex items-center gap-4">
+                  <h3 className="text-white font-bold text-lg">{season.name}</h3>
+                  {data?.trailerKey && isOpen && (
+                    <button
+                      onClick={(e) => { e.stopPropagation(); setActiveTrailer({ key: data.trailerKey, title: season.name }); }}
+                      className="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-bold hover:bg-red-500/20 transition-colors"
+                    >
+                      <PlayCircle className="w-3.5 h-3.5" /> Trailer
+                    </button>
+                  )}
+                </div>
                 <div className="flex flex-wrap items-center gap-4 mt-1 text-sm text-gray-400">
                   {airYear && <span>{airYear}</span>}
                   <span>{season.episode_count} Episodes</span>
@@ -215,6 +242,18 @@ const SeasonAccordion = ({ seasons = [], tvId }) => {
                 )}
               </div>
             </button>
+            
+            {/* Mobile Trailer Button */}
+            {data?.trailerKey && isOpen && (
+              <div className="sm:hidden px-6 pb-2 -mt-2">
+                <button
+                  onClick={(e) => { e.stopPropagation(); setActiveTrailer({ key: data.trailerKey, title: season.name }); }}
+                  className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-sm font-bold hover:bg-red-500/20 transition-colors"
+                >
+                  <PlayCircle className="w-4 h-4" /> Watch Season Trailer
+                </button>
+              </div>
+            )}
 
             {/* Season overview */}
             {isOpen && season.overview && (
@@ -252,6 +291,15 @@ const SeasonAccordion = ({ seasons = [], tvId }) => {
           </div>
         );
       })}
+
+      {/* Season Trailer Modal */}
+      {activeTrailer && (
+        <TrailerModal
+          trailerKey={activeTrailer.key}
+          title={`${activeTrailer.title} Trailer`}
+          onClose={() => setActiveTrailer(null)}
+        />
+      )}
     </div>
   );
 };

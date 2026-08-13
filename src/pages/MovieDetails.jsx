@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
 import {
-  getMovieDetails, getSimilarMovies, getMovieCredits,
-  getTVDetails, getSimilarTVShows, getTVCredits,
+  getMovieDetails, getSimilarMovies, getMovieCredits, getMovieVideos,
+  getTVDetails, getSimilarTVShows, getTVCredits, getTVVideos,
 } from '../services/tmdb';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import MovieCard from '../components/common/MovieCard';
@@ -10,7 +10,8 @@ import SeasonAccordion from '../components/details/SeasonAccordion';
 import ReviewModal from '../components/details/ReviewModal';
 import WatchProviders from '../components/details/WatchProviders';
 import CastSection from '../components/details/CastSection';
-import { Star, Clock, Calendar, Heart, Tv, Film, Eye, EyeOff, MessageSquarePlus, Trash2 } from 'lucide-react';
+import TrailerModal from '../components/details/TrailerModal';
+import { Star, Clock, Calendar, Heart, Tv, Film, Eye, EyeOff, MessageSquarePlus, Trash2, PlayCircle } from 'lucide-react';
 import { useWatchlist } from '../context/WatchlistContext';
 import { useWatched } from '../context/WatchedContext';
 import { useReviews } from '../context/ReviewContext';
@@ -29,6 +30,16 @@ const ReviewTag = ({ voteAverage, voteCount }) => {
   );
 };
 
+// Pick best trailer from TMDB videos
+const pickTrailer = (videos = []) => {
+  const priority = ['Trailer', 'Teaser', 'Clip', 'Behind the Scenes'];
+  for (const type of priority) {
+    const found = videos.filter(v => v.site === 'YouTube' && v.type === type);
+    if (found.length) return found[0];
+  }
+  return videos.find(v => v.site === 'YouTube') || null;
+};
+
 const MediaDetails = () => {
   const { id } = useParams();
   const location = useLocation();
@@ -37,7 +48,9 @@ const MediaDetails = () => {
   const [media, setMedia] = useState(null);
   const [similar, setSimilar] = useState([]);
   const [cast, setCast] = useState([]);
+  const [trailerKey, setTrailerKey] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showTrailer, setShowTrailer] = useState(false);
 
   const { isInWatchlist, addToWatchlist, removeFromWatchlist } = useWatchlist();
   const { isWatched, markWatched, unmarkWatched }              = useWatched();
@@ -50,23 +63,29 @@ const MediaDetails = () => {
       window.scrollTo(0, 0);
       try {
         if (isTV) {
-          const [details, sim, credits] = await Promise.all([
+          const [details, sim, credits, videos] = await Promise.all([
             getTVDetails(id),
             getSimilarTVShows(id),
             getTVCredits(id),
+            getTVVideos(id),
           ]);
           setMedia(details);
           setSimilar(sim.results.slice(0, 5));
           setCast(credits.cast || []);
+          const trailer = pickTrailer(videos.results);
+          if (trailer) setTrailerKey(trailer.key);
         } else {
-          const [details, sim, credits] = await Promise.all([
+          const [details, sim, credits, videos] = await Promise.all([
             getMovieDetails(id),
             getSimilarMovies(id),
             getMovieCredits(id),
+            getMovieVideos(id),
           ]);
           setMedia(details);
           setSimilar(sim.results.slice(0, 5));
           setCast(credits.cast || []);
+          const trailer = pickTrailer(videos.results);
+          if (trailer) setTrailerKey(trailer.key);
         }
       } catch (err) {
         console.error(err);
@@ -248,6 +267,17 @@ const MediaDetails = () => {
                 <MessageSquarePlus className="w-4 h-4" />
                 {userReview ? 'Edit Your Review' : 'Write a Review'}
               </button>
+
+              {/* Watch Trailer */}
+              {trailerKey && (
+                <button
+                  onClick={() => setShowTrailer(true)}
+                  className="flex items-center gap-2.5 px-6 py-3.5 rounded-full font-semibold text-sm border border-red-500/30 bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-all duration-200 hover:scale-105"
+                >
+                  <PlayCircle className="w-4 h-4" />
+                  Watch Trailer
+                </button>
+              )}
             </div>
 
             {/* User's existing review card */}
@@ -302,6 +332,15 @@ const MediaDetails = () => {
           media={media}
           mediaType={mediaType}
           onClose={() => setShowReviewModal(false)}
+        />
+      )}
+
+      {/* Trailer Modal */}
+      {showTrailer && trailerKey && (
+        <TrailerModal
+          trailerKey={trailerKey}
+          title={`${title} - Trailer`}
+          onClose={() => setShowTrailer(false)}
         />
       )}
 

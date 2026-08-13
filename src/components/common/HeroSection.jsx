@@ -34,12 +34,38 @@ const HeroSection = () => {
   const [postersCol1, setPostersCol1] = useState([]);
   const [postersCol2, setPostersCol2] = useState([]);
 
+  // Helper to shuffle array
+  const shuffle = (array) => {
+    const arr = [...array];
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  };
+
   useEffect(() => {
-    getTrendingMovies('week').then(data => {
-      const valid = data.results.filter(r => r.poster_path);
-      const half = Math.floor(valid.length / 2);
-      setPostersCol1(valid.slice(0, half));
-      setPostersCol2(valid.slice(half));
+    // Fetch multiple pages so we have a large pool to shuffle
+    Promise.all([
+      getTrendingMovies('week'),
+      fetch(`https://api.themoviedb.org/3/trending/movie/week?page=2`, {
+        headers: { accept: 'application/json', Authorization: `Bearer ${import.meta.env.VITE_TMDB_API_KEY}` }
+      }).then(r => r.json())
+    ]).then(([page1, page2]) => {
+      const allValid = [...page1.results, ...page2.results].filter(r => r.poster_path);
+      
+      const updatePosters = () => {
+        const shuffled = shuffle(allValid);
+        const half = Math.floor(shuffled.length / 2);
+        setPostersCol1(shuffled.slice(0, half));
+        setPostersCol2(shuffled.slice(half));
+      };
+
+      updatePosters(); // Initial load
+      
+      // Reshuffle every 15 seconds to keep the carousel fresh
+      const interval = setInterval(updatePosters, 15000);
+      return () => clearInterval(interval);
     }).catch(console.error);
   }, []);
 
