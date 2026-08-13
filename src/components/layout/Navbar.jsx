@@ -64,6 +64,19 @@ const SURPRISE_POOL = [
   { id: 95396,  type: 'tv' },    // Succession
 ];
 
+// Fisher-Yates shuffle
+const shuffleArray = (arr) => {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+};
+
+// Module-level queue — persists across renders, never repeats until all 55 are shown
+let surpriseQueue = shuffleArray(SURPRISE_POOL);
+
 const Navbar = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -73,8 +86,11 @@ const Navbar = () => {
     `text-lg font-medium transition-colors duration-300 ${isActive ? 'text-[var(--color-accent)]' : 'text-gray-300 hover:text-white'}`;
 
   const handleSurprise = () => {
-    if (loading) return;
-    const pick = SURPRISE_POOL[Math.floor(Math.random() * SURPRISE_POOL.length)];
+    // When queue is empty, reshuffle and start again
+    if (surpriseQueue.length === 0) {
+      surpriseQueue = shuffleArray(SURPRISE_POOL);
+    }
+    const pick = surpriseQueue.pop();
     navigate(`/${pick.type}/${pick.id}`);
   };
 
