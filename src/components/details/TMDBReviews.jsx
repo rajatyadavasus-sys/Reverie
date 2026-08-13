@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Star, MessageSquare } from 'lucide-react';
 
 const getRatingTag = (rating) => {
@@ -16,7 +16,12 @@ const getRatingTag = (rating) => {
 };
 
 const TMDBReviews = ({ reviews }) => {
+  const [visibleCount, setVisibleCount] = useState(6);
+
   if (!reviews || reviews.length === 0) return null;
+
+  const hasMore = visibleCount < reviews.length;
+  const showMore = () => setVisibleCount((prev) => prev + 6);
 
   return (
     <div className="container mx-auto px-8 lg:px-16 pt-24">
@@ -26,7 +31,7 @@ const TMDBReviews = ({ reviews }) => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {reviews.slice(0, 6).map((review) => {
+        {reviews.slice(0, visibleCount).map((review) => {
           const rating = review.author_details?.rating;
           const tag = getRatingTag(rating);
           const avatar = review.author_details?.avatar_path;
@@ -65,6 +70,17 @@ const TMDBReviews = ({ reviews }) => {
           );
         })}
       </div>
+
+      {hasMore && (
+        <div className="mt-10 flex justify-center">
+          <button 
+            onClick={showMore}
+            className="px-8 py-3 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-white font-semibold transition-all hover:scale-105"
+          >
+            Load More Reviews
+          </button>
+        </div>
+      )}
     </div>
   );
 };
