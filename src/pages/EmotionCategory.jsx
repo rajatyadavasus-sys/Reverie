@@ -8,82 +8,96 @@ const EMOTION_MAP = {
   happy: {
     movieGenres: '35|18',
     tvGenres: '35|18',
-    withoutGenres: '16,27,53,80,9648,10752', // Exclude Animation, Horror, Thriller, Crime, Mystery, War
+    withoutGenres: '16,27,53,80,9648,10752',
     label: 'Happy & Uplifting',
+    sub: 'Comedies & feel-good films',
     Icon: Smile,
     description: 'Feel-good live-action films, heartwarming comedies, and inspiring human stories to brighten your day.',
     gradient: 'from-yellow-500/20 to-orange-500/10',
     accent: 'text-yellow-400',
     border: 'border-yellow-500/20',
     sectionColor: 'border-yellow-500',
+    hexColor: '#f59e0b',
   },
   sad: {
     movieGenres: '18',
     tvGenres: '18',
     label: 'Melancholic',
+    sub: 'Emotional dramas',
     Icon: CloudRain,
     description: 'Emotional dramas that let you feel deeply and find cathartic release.',
     gradient: 'from-blue-500/20 to-cyan-500/10',
     accent: 'text-blue-400',
     border: 'border-blue-500/20',
     sectionColor: 'border-blue-500',
+    hexColor: '#60a5fa',
   },
   romantic: {
     movieGenres: '10749',
     tvGenres: '10749',
     label: 'Romantic',
+    sub: 'Love stories & romance',
     Icon: Heart,
     description: 'Sweeping love stories and heartfelt romances for those tender moments.',
     gradient: 'from-pink-500/20 to-rose-500/10',
     accent: 'text-pink-400',
     border: 'border-pink-500/20',
     sectionColor: 'border-pink-500',
+    hexColor: '#f472b6',
   },
   excited: {
     movieGenres: '28|12',
     tvGenres: '28|12',
     label: 'Excited',
+    sub: 'Action & adventure',
     Icon: Zap,
     description: 'Action-packed adventures and adrenaline-fueled thrillers to get your heart racing.',
     gradient: 'from-orange-500/20 to-red-500/10',
     accent: 'text-orange-400',
     border: 'border-orange-500/20',
     sectionColor: 'border-orange-500',
+    hexColor: '#fb923c',
   },
   scared: {
     movieGenres: '27|53',
     tvGenres: '27|9648',
     label: 'Thrilled',
+    sub: 'Horror & thrillers',
     Icon: Ghost,
     description: 'Spine-chilling horror and nerve-wracking thrillers for a late-night scare session.',
     gradient: 'from-purple-500/20 to-indigo-500/10',
     accent: 'text-purple-400',
     border: 'border-purple-500/20',
     sectionColor: 'border-purple-500',
-    customInjectTV: [61889, 203857, 71728], // Daredevil, Born Again, The Punisher
-    customInjectMovie: [7267, 13074],       // The Punisher (2004), War Zone (2008)
+    customInjectTV: [61889, 203857, 71728],
+    customInjectMovie: [7267, 13074],
+    hexColor: '#c084fc',
   },
   relaxed: {
     movieGenres: '99|10770',
     tvGenres: '99|10764',
     label: 'Relaxed',
+    sub: 'Documentaries & calm films',
     Icon: Leaf,
     description: 'Calm documentaries and easy-viewing shows to wind down and decompress.',
     gradient: 'from-green-500/20 to-teal-500/10',
     accent: 'text-green-400',
     border: 'border-green-500/20',
     sectionColor: 'border-green-500',
+    hexColor: '#34d399',
   },
   'mind-bending': {
     movieGenres: '878|9648',
     tvGenres: '10765|9648',
     label: 'Mind-Bending',
+    sub: 'Sci-Fi & mystery',
     Icon: Aperture,
     description: 'Mind-twisting sci-fi and mysteries that make you question everything.',
     gradient: 'from-violet-500/20 to-fuchsia-500/10',
     accent: 'text-violet-400',
     border: 'border-violet-500/20',
     sectionColor: 'border-violet-500',
+    hexColor: '#818cf8',
   },
 };
 
@@ -159,42 +173,79 @@ const EmotionCategory = () => {
   const { emotion } = useParams();
   const em = EMOTION_MAP[emotion] || EMOTION_MAP['happy'];
   const [activeTab, setActiveTab] = useState('movies');
+  const [hoveredEmotion, setHoveredEmotion] = useState(null);
 
   const mediaType = activeTab === 'movies' ? 'movie' : 'tv';
   const genres    = activeTab === 'movies' ? em.movieGenres : em.tvGenres;
 
   return (
     <div className="w-full pb-24">
-      {/* Emotion Hero */}
-      <div className={`w-full bg-gradient-to-br ${em.gradient} border-b ${em.border} relative overflow-hidden`}>
-        {/* Abstract background glow */}
-        <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-current opacity-20 blur-[100px] rounded-full ${em.accent}`}></div>
-        
-        <div className="container mx-auto px-8 lg:px-16 py-24 text-center relative z-10">
-          <div className="mb-8 flex justify-center">
-            <em.Icon className={`w-24 h-24 ${em.accent} drop-shadow-2xl`} />
-          </div>
-          <h1 className={`text-5xl md:text-7xl font-black mb-6 ${em.accent}`}>{em.label}</h1>
-          <p className="text-gray-300 text-xl max-w-2xl mx-auto leading-relaxed mb-12">{em.description}</p>
-          
-          {/* Quick Mood Switcher */}
-          <div className="flex flex-col items-center justify-center pt-8 border-t border-white/10 max-w-4xl mx-auto">
-            <p className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-6">Want to feel something else?</p>
-            <div className="flex flex-wrap justify-center gap-3 md:gap-4">
-              {Object.entries(EMOTION_MAP).map(([key, data]) => {
-                if (key === emotion) return null;
-                return (
-                  <Link
-                    key={key}
-                    to={`/emotion/${key}`}
-                    className={`flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#121620] hover:bg-white/10 border ${data.border} transition-all hover:-translate-y-1 hover:shadow-lg`}
-                  >
-                    <data.Icon className={`w-4 h-4 ${data.accent}`} />
-                    <span className="text-sm font-semibold text-white tracking-wide">{data.label}</span>
-                  </Link>
-                );
-              })}
+      {/* Emotion Hero - Bento Box Redesign */}
+      <div className="w-full relative overflow-hidden bg-[var(--color-background)] border-b border-white/5">
+        <div className="container mx-auto px-8 lg:px-16 py-12 lg:py-24 relative z-10">
+          <div className="flex flex-col xl:flex-row gap-6 lg:gap-8 items-stretch">
+            
+            {/* Left Side: Current Emotion (Hero Card) */}
+            <div className="flex-1 relative rounded-[2rem] overflow-hidden flex flex-col justify-center p-10 lg:p-16 border border-white/10" style={{ backgroundColor: '#121620' }}>
+              <div 
+                className="absolute -top-32 -right-32 w-[500px] h-[500px] rounded-full blur-[100px] opacity-10 pointer-events-none"
+                style={{ backgroundColor: em.hexColor }}
+              />
+              
+              <div className="relative z-10">
+                <div className="w-20 h-20 rounded-[1.5rem] bg-white/5 border border-white/10 flex items-center justify-center mb-8 shadow-lg" style={{ boxShadow: `0 10px 40px -10px ${em.hexColor}60` }}>
+                  <em.Icon className="w-10 h-10 text-white" />
+                </div>
+                <h1 className="text-5xl md:text-7xl font-black mb-6 text-white tracking-tight leading-tight">{em.label}</h1>
+                <p className="text-gray-400 text-xl max-w-xl leading-relaxed">{em.description}</p>
+              </div>
             </div>
+
+            {/* Right Side: Other Emotions Grid */}
+            <div className="xl:w-[600px] flex-shrink-0 flex flex-col justify-center">
+              <div className="flex items-center gap-4 mb-6">
+                <h3 className="text-sm font-bold tracking-[0.2em] uppercase text-gray-500">Or pick another mood</h3>
+                <div className="flex-1 h-px bg-gradient-to-r from-white/10 to-transparent"></div>
+              </div>
+
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 md:gap-4">
+                {Object.entries(EMOTION_MAP).map(([key, data]) => {
+                  if (key === emotion) return null;
+                  return (
+                    <Link
+                      key={key}
+                      to={`/emotion/${key}`}
+                      onMouseEnter={() => setHoveredEmotion(key)}
+                      onMouseLeave={() => setHoveredEmotion(null)}
+                      className="group relative flex flex-col p-4 sm:p-5 rounded-3xl transition-all duration-300 overflow-hidden border border-white/5"
+                      style={{
+                        backgroundColor: '#121620',
+                        transform: hoveredEmotion === key ? 'translateY(-4px)' : 'none',
+                        boxShadow: hoveredEmotion === key ? `0 12px 30px -10px ${data.hexColor}30` : '0 4px 6px -1px rgba(0,0,0,0.1)',
+                      }}
+                    >
+                      {/* Soft Background Glow on Hover */}
+                      <div 
+                        className="absolute -top-12 -right-12 w-40 h-40 rounded-full blur-[50px] opacity-10 transition-opacity duration-300 group-hover:opacity-30 pointer-events-none"
+                        style={{ backgroundColor: data.hexColor }}
+                      />
+
+                      {/* Icon */}
+                      <div className="relative z-10 w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-white/5 border border-white/5 flex items-center justify-center mb-6 transition-transform duration-300 group-hover:scale-110 group-hover:bg-white/10">
+                        <data.Icon className="w-5 h-5 text-white" />
+                      </div>
+
+                      {/* Text */}
+                      <div className="relative z-10 mt-auto">
+                        <h4 className="text-[15px] sm:text-base font-bold text-white tracking-tight leading-tight mb-1">{data.label}</h4>
+                        <p className="text-[10px] sm:text-[11px] text-gray-400 font-medium">{data.sub}</p>
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+
           </div>
         </div>
       </div>
