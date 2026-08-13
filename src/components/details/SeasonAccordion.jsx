@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ChevronDown, ChevronUp, Calendar, Clock, Tv } from 'lucide-react';
+import { ChevronDown, ChevronUp, Calendar, Clock, Tv, User } from 'lucide-react';
 import { getTVSeason } from '../../services/tmdb';
 
 const EpisodeCard = ({ episode }) => {
@@ -77,9 +77,56 @@ const EpisodeCard = ({ episode }) => {
   );
 };
 
+// Mini cast strip for season
+const SeasonCast = ({ cast = [] }) => {
+  const [showAll, setShowAll] = useState(false);
+  if (!cast.length) return null;
+  const displayed = showAll ? cast : cast.slice(0, 10);
+
+  return (
+    <div className="mt-6 mb-2">
+      <p className="text-sm font-semibold text-gray-400 uppercase tracking-widest mb-4">Season Cast</p>
+      <div className="flex flex-wrap gap-4">
+        {displayed.map(person => (
+          <div key={person.id} className="flex items-center gap-3 bg-white/5 rounded-xl px-3 py-2.5 border border-white/5 hover:border-white/15 transition-all">
+            <div className="w-9 h-9 rounded-full overflow-hidden bg-white/10 flex-shrink-0">
+              {person.profile_path ? (
+                <img
+                  src={`https://image.tmdb.org/t/p/w45${person.profile_path}`}
+                  alt={person.name}
+                  className="w-full h-full object-cover"
+                  loading="lazy"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center">
+                  <User className="w-4 h-4 text-gray-500" />
+                </div>
+              )}
+            </div>
+            <div className="min-w-0">
+              <p className="text-white text-xs font-semibold leading-tight truncate max-w-[100px]">{person.name}</p>
+              {person.character && (
+                <p className="text-gray-500 text-[10px] italic truncate max-w-[100px]">{person.character}</p>
+              )}
+            </div>
+          </div>
+        ))}
+        {cast.length > 10 && (
+          <button
+            onClick={() => setShowAll(p => !p)}
+            className="flex items-center px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-gray-400 hover:text-white text-xs font-semibold transition-colors"
+          >
+            {showAll ? 'Show less' : `+${cast.length - 10} more`}
+          </button>
+        )}
+      </div>
+    </div>
+  );
+};
+
 const SeasonAccordion = ({ seasons = [], tvId }) => {
   const [openSeason, setOpenSeason]   = useState(null);
-  const [episodes, setEpisodes]       = useState({});
+  const [seasonData, setSeasonData]   = useState({});
   const [loadingEps, setLoadingEps]   = useState({});
 
   const toggleSeason = async (seasonNumber) => {
@@ -90,12 +137,18 @@ const SeasonAccordion = ({ seasons = [], tvId }) => {
     setOpenSeason(seasonNumber);
 
     // Already loaded
-    if (episodes[seasonNumber]) return;
+    if (seasonData[seasonNumber]) return;
 
     setLoadingEps(prev => ({ ...prev, [seasonNumber]: true }));
     try {
       const data = await getTVSeason(tvId, seasonNumber);
-      setEpisodes(prev => ({ ...prev, [seasonNumber]: data.episodes || [] }));
+      setSeasonData(prev => ({
+        ...prev,
+        [seasonNumber]: {
+          episodes: data.episodes || [],
+          cast: data.credits?.cast || data.aggregate_credits?.cast || [],
+        },
+      }));
     } catch (err) {
       console.error(err);
     } finally {
@@ -103,7 +156,6 @@ const SeasonAccordion = ({ seasons = [], tvId }) => {
     }
   };
 
-  // Filter out "specials" (season 0) — optionally keep
   const displaySeasons = seasons.filter(s => s.season_number > 0);
 
   return (
@@ -116,6 +168,7 @@ const SeasonAccordion = ({ seasons = [], tvId }) => {
         const airYear = season.air_date
           ? new Date(season.air_date).getFullYear()
           : null;
+        const data = seasonData[season.season_number];
 
         return (
           <div
@@ -170,21 +223,29 @@ const SeasonAccordion = ({ seasons = [], tvId }) => {
               </div>
             )}
 
-            {/* Episodes */}
+            {/* Season cast + Episodes */}
             {isOpen && (
               <div className="px-6 pb-6">
                 {loadingEps[season.season_number] ? (
                   <div className="py-8 text-center">
                     <div className="inline-block w-6 h-6 border-2 border-[var(--color-accent)] border-t-transparent rounded-full animate-spin" />
                   </div>
-                ) : episodes[season.season_number]?.length > 0 ? (
-                  <div className="space-y-3 mt-4">
-                    {episodes[season.season_number].map(ep => (
-                      <EpisodeCard key={ep.id} episode={ep} />
-                    ))}
-                  </div>
                 ) : (
-                  <p className="text-gray-500 text-sm py-6 text-center">No episode data available yet.</p>
+                  <>
+                    {/* Season-level cast */}
+                    <SeasonCast cast={data?.cast || []} />
+
+                    {/* Episodes list */}
+                    {data?.episodes?.length > 0 ? (
+                      <div className="space-y-3 mt-6">
+                        {data.episodes.map(ep => (
+                          <EpisodeCard key={ep.id} episode={ep} />
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-gray-500 text-sm py-6 text-center">No episode data available yet.</p>
+                    )}
+                  </>
                 )}
               </div>
             )}

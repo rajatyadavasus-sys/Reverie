@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
 import {
-  getMovieDetails, getSimilarMovies,
-  getTVDetails, getSimilarTVShows,
+  getMovieDetails, getSimilarMovies, getMovieCredits,
+  getTVDetails, getSimilarTVShows, getTVCredits,
 } from '../services/tmdb';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import MovieCard from '../components/common/MovieCard';
 import SeasonAccordion from '../components/details/SeasonAccordion';
 import ReviewModal from '../components/details/ReviewModal';
 import WatchProviders from '../components/details/WatchProviders';
+import CastSection from '../components/details/CastSection';
 import { Star, Clock, Calendar, Heart, Tv, Film, Eye, EyeOff, MessageSquarePlus, Trash2 } from 'lucide-react';
 import { useWatchlist } from '../context/WatchlistContext';
 import { useWatched } from '../context/WatchedContext';
@@ -35,6 +36,7 @@ const MediaDetails = () => {
 
   const [media, setMedia] = useState(null);
   const [similar, setSimilar] = useState([]);
+  const [cast, setCast] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const { isInWatchlist, addToWatchlist, removeFromWatchlist } = useWatchlist();
@@ -48,19 +50,23 @@ const MediaDetails = () => {
       window.scrollTo(0, 0);
       try {
         if (isTV) {
-          const [details, sim] = await Promise.all([
+          const [details, sim, credits] = await Promise.all([
             getTVDetails(id),
             getSimilarTVShows(id),
+            getTVCredits(id),
           ]);
           setMedia(details);
           setSimilar(sim.results.slice(0, 5));
+          setCast(credits.cast || []);
         } else {
-          const [details, sim] = await Promise.all([
+          const [details, sim, credits] = await Promise.all([
             getMovieDetails(id),
             getSimilarMovies(id),
+            getMovieCredits(id),
           ]);
           setMedia(details);
           setSimilar(sim.results.slice(0, 5));
+          setCast(credits.cast || []);
         }
       } catch (err) {
         console.error(err);
@@ -304,8 +310,15 @@ const MediaDetails = () => {
         <WatchProviders id={media.id} mediaType={mediaType} />
       </div>
 
+      {/* Cast */}
+      {cast.length > 0 && (
+        <div className="container mx-auto px-8 lg:px-16 pt-20">
+          <CastSection cast={cast} />
+        </div>
+      )}
 
       {/* Seasons & Episodes (TV only) */}
+
       {isTV && media.seasons?.length > 0 && (
         <div className="container mx-auto px-8 lg:px-16 pt-24">
           <div className="flex items-end justify-between mb-10">
