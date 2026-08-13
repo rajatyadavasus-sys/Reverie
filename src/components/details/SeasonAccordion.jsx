@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { ChevronDown, ChevronUp, Calendar, Clock, Tv, User, PlayCircle } from 'lucide-react';
 import { getTVSeason, getTVSeasonVideos } from '../../services/tmdb';
 import TrailerModal from './TrailerModal';
@@ -89,8 +90,8 @@ const SeasonCast = ({ cast = [] }) => {
       <p className="text-sm font-semibold text-gray-400 uppercase tracking-widest mb-4">Season Cast</p>
       <div className="flex flex-wrap gap-4">
         {displayed.map(person => (
-          <div key={person.id} className="flex items-center gap-3 bg-white/5 rounded-xl px-3 py-2.5 border border-white/5 hover:border-white/15 transition-all">
-            <div className="w-9 h-9 rounded-full overflow-hidden bg-white/10 flex-shrink-0">
+          <Link to={`/person/${person.id}`} key={person.id} className="flex items-center gap-3 bg-white/5 rounded-xl px-3 py-2.5 border border-white/5 hover:border-white/15 transition-all group">
+            <div className="w-9 h-9 rounded-full overflow-hidden bg-white/10 flex-shrink-0 group-hover:border-[var(--color-accent)]/40 border border-transparent transition-all">
               {person.profile_path ? (
                 <img
                   src={`https://image.tmdb.org/t/p/w45${person.profile_path}`}
@@ -110,7 +111,7 @@ const SeasonCast = ({ cast = [] }) => {
                 <p className="text-gray-500 text-[10px] italic truncate max-w-[100px]">{person.character}</p>
               )}
             </div>
-          </div>
+          </Link>
         ))}
         {cast.length > 10 && (
           <button

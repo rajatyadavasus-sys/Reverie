@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import MovieCard from './MovieCard';
 import LoadingSpinner from './LoadingSpinner';
-import { ChevronDown, Loader2 } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 
 /**
  * A movie/TV grid that supports "Load More" pagination.
@@ -17,22 +17,42 @@ const LoadMoreGrid = ({ initialItems = [], mediaType = 'movie', fetchMore = null
   const [loading, setLoading]   = useState(false);
   const [hasMore, setHasMore]   = useState(!!fetchMore);
 
-  const handleLoadMore = async () => {
-    if (loading || !fetchMore) return;
+  const observer = useRef();
+
+  const handleLoadMore = useCallback(async () => {
+    if (loading || !fetchMore || !hasMore) return;
     setLoading(true);
     try {
       const nextPage = page + 1;
       const data = await fetchMore(nextPage);
       const newItems = data.results.filter(r => r.poster_path); // only items with posters
-      setItems(prev => [...prev, ...newItems]);
+      setItems(prev => {
+        // Prevent duplicates (API sometimes returns same items on adjacent pages)
+        const existingIds = new Set(prev.map(i => i.id));
+        const uniqueNewItems = newItems.filter(i => !existingIds.has(i.id));
+        return [...prev, ...uniqueNewItems];
+      });
       setPage(nextPage);
-      if (nextPage >= data.total_pages) setHasMore(false);
+      if (nextPage >= data.total_pages || data.results.length === 0) setHasMore(false);
     } catch (err) {
       console.error('Load more error:', err);
     } finally {
       setLoading(false);
     }
-  };
+  }, [loading, fetchMore, hasMore, page]);
+
+  const lastElementRef = useCallback((node) => {
+    if (loading) return;
+    if (observer.current) observer.current.disconnect();
+    
+    observer.current = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting && hasMore) {
+        handleLoadMore();
+      }
+    }, { rootMargin: '200px' }); // trigger a bit before they hit bottom
+    
+    if (node) observer.current.observe(node);
+  }, [loading, hasMore, handleLoadMore]);
 
   return (
     <div>
@@ -42,26 +62,15 @@ const LoadMoreGrid = ({ initialItems = [], mediaType = 'movie', fetchMore = null
         ))}
       </div>
 
-      {/* Load More Button */}
+      {/* Infinite Scroll trigger element */}
       {hasMore && fetchMore && (
-        <div className="flex justify-center mt-14">
-          <button
-            onClick={handleLoadMore}
-            disabled={loading}
-            className="flex items-center gap-3 px-10 py-4 rounded-full bg-[var(--color-card)] hover:bg-white/10 border border-white/10 hover:border-[var(--color-accent)]/50 text-white font-semibold text-base transition-all duration-200 hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0"
-          >
-            {loading ? (
-              <>
-                <Loader2 className="w-5 h-5 animate-spin text-[var(--color-accent)]" />
-                Loading...
-              </>
-            ) : (
-              <>
-                <ChevronDown className="w-5 h-5 text-[var(--color-accent)]" />
-                Show More
-              </>
-            )}
-          </button>
+        <div ref={lastElementRef} className="flex justify-center mt-14 h-10">
+          {loading && (
+            <div className="flex items-center gap-2 text-[var(--color-accent)] font-medium">
+              <Loader2 className="w-5 h-5 animate-spin" />
+              Loading more...
+            </div>
+          )}
         </div>
       )}
 

@@ -11,6 +11,7 @@ import Search from './pages/Search';
 import EmotionCategory from './pages/EmotionCategory';
 import Emotions from './pages/Emotions';
 import Watchlist from './pages/Watchlist';
+import ActorProfile from './pages/ActorProfile';
 
 const NotFound = () => (
   <div className="flex flex-col items-center justify-center h-[60vh] text-center px-8">
@@ -36,6 +37,7 @@ function App() {
                 <Route path="watchlist" element={<Watchlist />} />
                 <Route path="movie/:id" element={<MovieDetails />} />
                 <Route path="tv/:id" element={<MovieDetails />} />
+                <Route path="person/:id" element={<ActorProfile />} />
                 <Route path="*" element={<NotFound />} />
               </Route>
             </Routes>

@@ -11,7 +11,7 @@ import ReviewModal from '../components/details/ReviewModal';
 import WatchProviders from '../components/details/WatchProviders';
 import CastSection from '../components/details/CastSection';
 import TrailerModal from '../components/details/TrailerModal';
-import { Star, Clock, Calendar, Heart, Tv, Film, Eye, EyeOff, MessageSquarePlus, Trash2, PlayCircle } from 'lucide-react';
+import { Star, Clock, Calendar, Heart, Tv, Film, Eye, EyeOff, MessageSquarePlus, Trash2, PlayCircle, Share2 } from 'lucide-react';
 import { useWatchlist } from '../context/WatchlistContext';
 import { useWatched } from '../context/WatchedContext';
 import { useReviews } from '../context/ReviewContext';
@@ -119,6 +119,25 @@ const MediaDetails = () => {
   const toggleWatched = () => {
     if (isMarked) unmarkWatched(media.id, mediaType);
     else markWatched({ ...media, media_type: mediaType });
+  };
+
+  const handleShareReview = async () => {
+    if (!userReview) return;
+    
+    const tagLabel = userReview.tag ? userReview.tag.charAt(0).toUpperCase() + userReview.tag.slice(1).replace('-', ' ') : 'a review';
+    const text = `I just rated ${title} as "${tagLabel}" on Reverie! 🍿✨\n\n"${userReview.opinion || 'Check it out!'}"\n\nSee for yourself:`;
+    const url = window.location.href;
+
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: `Reverie: ${title}`, text, url });
+      } else {
+        await navigator.clipboard.writeText(`${text} ${url}`);
+        alert('Review link copied to clipboard!');
+      }
+    } catch (err) {
+      console.error('Error sharing:', err);
+    }
   };
 
   return (
@@ -290,13 +309,22 @@ const MediaDetails = () => {
                       {new Date(userReview.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
                     </span>
                   </div>
-                  <button
-                    onClick={() => removeReview(media.id, mediaType)}
-                    className="p-2 text-gray-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors opacity-0 group-hover/review:opacity-100"
-                    title="Delete Review"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
+                  <div className="flex items-center gap-2 opacity-0 group-hover/review:opacity-100 transition-opacity">
+                    <button
+                      onClick={handleShareReview}
+                      className="p-2 text-gray-400 hover:text-blue-400 hover:bg-blue-500/10 rounded-lg transition-colors"
+                      title="Share Review"
+                    >
+                      <Share2 className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => removeReview(media.id, mediaType)}
+                      className="p-2 text-gray-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+                      title="Delete Review"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
                 </div>
                 {/* Tag badge */}
                 {(() => {

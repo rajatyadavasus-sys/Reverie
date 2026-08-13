@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { Search, Heart, User, Sparkles, Dices, Loader2 } from 'lucide-react';
 import { getTrendingMovies, getTrendingTV } from '../../services/tmdb';
+import SearchBar from '../common/SearchBar';
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -57,7 +58,10 @@ const Navbar = () => {
           
           <div className="w-px h-8 bg-white/10 mx-2 hidden sm:block"></div>
 
-          <Link to="/search" className="text-gray-300 hover:text-white transition-colors p-2 hover:bg-white/5 rounded-full">
+          <SearchBar />
+          
+          {/* Mobile search icon */}
+          <Link to="/search" className="lg:hidden text-gray-300 hover:text-white transition-colors p-2 hover:bg-white/5 rounded-full">
             <Search className="w-6 h-6" />
           </Link>
           <Link to="/watchlist" className="text-gray-300 hover:text-white transition-colors p-2 hover:bg-white/5 rounded-full">

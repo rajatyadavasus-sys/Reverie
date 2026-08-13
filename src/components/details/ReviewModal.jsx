@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Star, Send, Trash2 } from 'lucide-react';
+import { X, Star, Send, Trash2, Share2 } from 'lucide-react';
 import { useReviews } from '../../context/ReviewContext';
 import { useWatched } from '../../context/WatchedContext';
 
@@ -63,6 +63,25 @@ const ReviewModal = ({ media, mediaType, onClose }) => {
     document.body.style.overflow = 'hidden';
     return () => { document.body.style.overflow = ''; };
   }, []);
+
+  const handleShare = async () => {
+    const title = media.title || media.name;
+    const tagObj = TAGS.find(t => t.key === selectedTag);
+    const tagLabel = tagObj ? tagObj.label : 'a review';
+    const text = `I just rated ${title} as "${tagLabel}" on Reverie! 🍿✨\n\n"${opinion.trim() || 'Check it out!'}"\n\nSee for yourself:`;
+    const url = window.location.href;
+
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: `Reverie: ${title}`, text, url });
+      } else {
+        await navigator.clipboard.writeText(`${text} ${url}`);
+        alert('Review link copied to clipboard!');
+      }
+    } catch (err) {
+      console.error('Error sharing:', err);
+    }
+  };
 
   const handleSubmit = () => {
     if (!selectedTag) return;
@@ -128,7 +147,15 @@ const ReviewModal = ({ media, mediaType, onClose }) => {
           <div className="flex flex-col items-center justify-center py-16 px-8 text-center">
             <div className="text-5xl mb-4">✅</div>
             <p className="text-white font-bold text-xl mb-2">Review Saved!</p>
-            <p className="text-gray-400">Also marked as Watched.</p>
+            <p className="text-gray-400 mb-8">Also marked as Watched.</p>
+            
+            <button
+              onClick={handleShare}
+              className="flex items-center gap-2 px-6 py-3 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30 hover:bg-blue-500/30 font-semibold transition-all hover:scale-105"
+            >
+              <Share2 className="w-4 h-4" />
+              Share to Socials
+            </button>
           </div>
         ) : (
           <div className="p-7 space-y-8">
