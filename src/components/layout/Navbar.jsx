@@ -84,8 +84,8 @@ const Navbar = () => {
   const { currentUser, logout, promptLogin } = useAuth();
   const { theme, setTheme, themes } = useTheme();
 
-  // Use DiceBear 'bottts-neutral' style avatars for a sleek, automated stylized look
-  const avatarUrl = `https://api.dicebear.com/7.x/bottts-neutral/svg?seed=${currentUser?.email || 'reverie'}&backgroundColor=transparent`;
+  // Use DiceBear 'lorelei' style avatars for a sleek, human stylized look
+  const avatarUrl = `https://api.dicebear.com/7.x/lorelei/svg?seed=${currentUser?.email || 'reverie'}&backgroundColor=transparent`;
 
   const navLinkClass = ({ isActive }) => 
     `text-lg font-medium transition-colors duration-300 ${isActive ? 'text-[var(--color-accent)]' : 'text-gray-300 hover:text-white'}`;
@@ -188,7 +188,10 @@ const Navbar = () => {
                         {isActive && (
                           <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-accent)]/20 to-transparent pointer-events-none"></div>
                         )}
-                        <span className="w-3 h-3 rounded-full shadow-sm mb-2 relative z-10" style={{ backgroundColor: t.color }}></span>
+                      <span 
+                        className="w-4 h-4 rounded-full shadow-[inset_0_2px_4px_rgba(255,255,255,0.6)] border border-white/40 mb-2 relative z-10 backdrop-blur-md bg-opacity-70" 
+                        style={{ backgroundColor: t.color }}
+                      ></span>
                         <span className={`text-xs font-bold relative z-10 ${isActive ? 'text-white' : 'text-gray-300'}`}>{t.name}</span>
                         <span className="text-[9px] text-gray-500 relative z-10">{t.sub}</span>
                       </button>

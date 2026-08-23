@@ -103,7 +103,7 @@ const Profile = () => {
     }
   };
 
-  const avatarUrl = `https://api.dicebear.com/7.x/bottts-neutral/svg?seed=${currentUser?.email || 'reverie'}&backgroundColor=transparent`;
+  const avatarUrl = `https://api.dicebear.com/7.x/lorelei/svg?seed=${currentUser?.email || 'reverie'}&backgroundColor=transparent`;
 
   return (
     <div className="container mx-auto px-8 lg:px-16 py-12">
@@ -136,13 +136,13 @@ const Profile = () => {
                   <button 
                     onClick={handleSaveName}
                     disabled={isSaving}
-                    className="text-sm bg-[var(--color-accent)] text-white px-3 py-1 rounded-lg font-bold hover:brightness-110 disabled:opacity-50"
+                    className="text-sm bg-white/10 hover:bg-[var(--color-accent)] border border-white/20 hover:border-[var(--color-accent)] text-white px-5 py-2 rounded-full font-bold backdrop-blur-md transition-all shadow-lg hover:shadow-[0_0_15px_var(--color-accent)] disabled:opacity-50"
                   >
                     {isSaving ? 'Saving...' : 'Save'}
                   </button>
                   <button 
                     onClick={() => { setIsEditingName(false); setEditName(currentUser.displayName || ''); }}
-                    className="text-sm bg-white/10 text-white px-3 py-1 rounded-lg font-bold hover:bg-white/20"
+                    className="text-sm bg-black/20 hover:bg-white/10 border border-transparent hover:border-white/20 text-gray-300 hover:text-white px-4 py-2 rounded-full font-bold backdrop-blur-md transition-all"
                   >
                     Cancel
                   </button>
@@ -212,7 +212,7 @@ const Profile = () => {
                 ></div>
                 
                 <span 
-                  className="w-10 h-10 rounded-full shadow-lg mb-6 relative z-10 border border-white/10 flex items-center justify-center transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6" 
+                  className="w-10 h-10 rounded-full shadow-[inset_0_2px_8px_rgba(255,255,255,0.6)] mb-6 relative z-10 border border-white/40 flex items-center justify-center transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6 backdrop-blur-md bg-opacity-70" 
                   style={{ backgroundColor: t.color }}
                 >
                   {isActive && <div className="w-3 h-3 bg-white rounded-full shadow-inner"></div>}

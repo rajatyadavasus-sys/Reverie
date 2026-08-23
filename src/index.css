@@ -7,27 +7,6 @@
   --color-accent-hover: #c084fc;
 }
 
-[data-theme="crimson"] {
-  --color-background: #110808;
-  --color-card: #200f0f;
-  --color-accent: #f43f5e;
-  --color-accent-hover: #fb7185;
-}
-
-[data-theme="emerald"] {
-  --color-background: #06110c;
-  --color-card: #0d1f17;
-  --color-accent: #10b981;
-  --color-accent-hover: #34d399;
-}
-
-[data-theme="gold"] {
-  --color-background: #121008;
-  --color-card: #221d12;
-  --color-accent: #eab308;
-  --color-accent-hover: #fde047;
-}
-
 [data-theme="ocean"] {
   --color-background: #08101a;
   --color-card: #111d2d;
@@ -35,11 +14,32 @@
   --color-accent-hover: #38bdf8;
 }
 
-[data-theme="cyberpunk"] {
+[data-theme="synthwave"] {
+  --color-background: #1a0b1c;
+  --color-card: #2d1330;
+  --color-accent: #f9a8d4;
+  --color-accent-hover: #fbcfe8;
+}
+
+[data-theme="noir"] {
   --color-background: #09090b;
   --color-card: #18181b;
-  --color-accent: #ec4899;
-  --color-accent-hover: #f472b6;
+  --color-accent: #ffffff;
+  --color-accent-hover: #e4e4e7;
+}
+
+[data-theme="toxic"] {
+  --color-background: #0f1712;
+  --color-card: #16241a;
+  --color-accent: #4ade80;
+  --color-accent-hover: #86efac;
+}
+
+[data-theme="rust"] {
+  --color-background: #1c1110;
+  --color-card: #2d1c1a;
+  --color-accent: #f97316;
+  --color-accent-hover: #fdba74;
 }
 
 @theme {
