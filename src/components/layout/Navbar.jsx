@@ -84,8 +84,8 @@ const Navbar = () => {
   const { currentUser, logout, promptLogin } = useAuth();
   const { theme, setTheme, themes } = useTheme();
 
-  // Use DiceBear 'lorelei' style avatars for a sleek, human stylized look
-  const avatarUrl = `https://api.dicebear.com/7.x/lorelei/svg?seed=${currentUser?.email || 'reverie'}&backgroundColor=transparent`;
+  // Use DiceBear 'micah' style avatars for a premium minimalist look
+  const avatarUrl = `https://api.dicebear.com/7.x/micah/svg?seed=${currentUser?.email || 'reverie'}&backgroundColor=transparent`;
 
   const navLinkClass = ({ isActive }) => 
     `text-lg font-medium transition-colors duration-300 ${isActive ? 'text-[var(--color-accent)]' : 'text-gray-300 hover:text-white'}`;
