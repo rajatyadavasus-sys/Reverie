@@ -5,6 +5,7 @@
   --color-card: #171C2A;
   --color-accent: #aa3bff;
   --color-accent-hover: #c084fc;
+  --color-accent-text: #ffffff;
 }
 
 [data-theme="ocean"] {
@@ -12,6 +13,7 @@
   --color-card: #111d2d;
   --color-accent: #0ea5e9;
   --color-accent-hover: #38bdf8;
+  --color-accent-text: #ffffff;
 }
 
 [data-theme="synthwave"] {
@@ -19,6 +21,7 @@
   --color-card: #2d1330;
   --color-accent: #f9a8d4;
   --color-accent-hover: #fbcfe8;
+  --color-accent-text: #000000;
 }
 
 [data-theme="noir"] {
@@ -26,6 +29,7 @@
   --color-card: #18181b;
   --color-accent: #ffffff;
   --color-accent-hover: #e4e4e7;
+  --color-accent-text: #000000;
 }
 
 [data-theme="toxic"] {
@@ -33,6 +37,7 @@
   --color-card: #16241a;
   --color-accent: #4ade80;
   --color-accent-hover: #86efac;
+  --color-accent-text: #000000;
 }
 
 [data-theme="rust"] {
@@ -40,6 +45,7 @@
   --color-card: #2d1c1a;
   --color-accent: #f97316;
   --color-accent-hover: #fdba74;
+  --color-accent-text: #ffffff;
 }
 
 @theme {
@@ -47,6 +53,7 @@
   --color-card: var(--color-card);
   --color-accent: var(--color-accent);
   --color-accent-hover: var(--color-accent-hover);
+  --color-accent-text: var(--color-accent-text);
 }
 
 body {

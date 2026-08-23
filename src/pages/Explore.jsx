@@ -97,7 +97,7 @@ const Explore = () => {
           onClick={() => setActiveTab('movies')}
           className={`flex items-center gap-2 px-8 py-3 rounded-full font-semibold transition-all duration-200 ${
             activeTab === 'movies'
-              ? 'bg-[var(--color-accent)] text-white shadow-lg shadow-purple-900/30'
+              ? 'bg-[var(--color-accent)] text-[var(--color-accent-text)] shadow-lg shadow-[var(--color-accent)]/30'
               : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white border border-white/10'
           }`}
         >
@@ -107,7 +107,7 @@ const Explore = () => {
           onClick={() => setActiveTab('tv')}
           className={`flex items-center gap-2 px-8 py-3 rounded-full font-semibold transition-all duration-200 ${
             activeTab === 'tv'
-              ? 'bg-[var(--color-accent)] text-white shadow-lg shadow-purple-900/30'
+              ? 'bg-[var(--color-accent)] text-[var(--color-accent-text)] shadow-lg shadow-[var(--color-accent)]/30'
               : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white border border-white/10'
           }`}
         >

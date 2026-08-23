@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import HeroSection from '../components/common/HeroSection';
 import LoadMoreGrid from '../components/common/LoadMoreGrid';
 import LoadingSpinner from '../components/common/LoadingSpinner';
@@ -87,13 +87,13 @@ const Home = () => {
             <p className="text-gray-400">What the world is watching today</p>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex bg-white/5 backdrop-blur-md rounded-full p-1 border border-white/10">
             <button
               onClick={() => setActiveTab('movies')}
               className={`flex items-center gap-2 px-6 py-2.5 rounded-full font-semibold text-sm transition-all duration-200 ${
                 activeTab === 'movies'
-                  ? 'bg-[var(--color-accent)] text-white shadow-lg shadow-purple-900/30'
-                  : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white border border-white/10'
+                  ? 'bg-[var(--color-accent)] text-[var(--color-accent-text)] shadow-lg shadow-[var(--color-accent)]/30'
+                  : 'text-gray-400 hover:text-white hover:bg-white/5'
               }`}
             >
               <Film className="w-4 h-4" /> Movies
@@ -102,8 +102,8 @@ const Home = () => {
               onClick={() => setActiveTab('tv')}
               className={`flex items-center gap-2 px-6 py-2.5 rounded-full font-semibold text-sm transition-all duration-200 ${
                 activeTab === 'tv'
-                  ? 'bg-[var(--color-accent)] text-white shadow-lg shadow-purple-900/30'
-                  : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white border border-white/10'
+                  ? 'bg-[var(--color-accent)] text-[var(--color-accent-text)] shadow-lg shadow-[var(--color-accent)]/30'
+                  : 'text-gray-400 hover:text-white hover:bg-white/5'
               }`}
             >
               <Tv className="w-4 h-4" /> TV Shows

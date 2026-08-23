@@ -141,7 +141,7 @@ const Profile = () => {
                   <button 
                     onClick={handleSaveName}
                     disabled={isSaving}
-                    className="text-sm bg-white/10 hover:bg-[var(--color-accent)] border border-white/20 hover:border-[var(--color-accent)] text-white px-5 py-2 rounded-full font-bold backdrop-blur-md transition-all shadow-lg hover:shadow-[0_0_15px_var(--color-accent)] disabled:opacity-50"
+                    className="text-sm bg-white/10 hover:bg-[var(--color-accent)] border border-white/20 hover:border-[var(--color-accent)] text-white hover:text-[var(--color-accent-text)] px-5 py-2 rounded-full font-bold backdrop-blur-md transition-all shadow-lg hover:shadow-[0_0_15px_var(--color-accent)] disabled:opacity-50"
                   >
                     {isSaving ? 'Saving...' : 'Save'}
                   </button>

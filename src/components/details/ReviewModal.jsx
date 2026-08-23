@@ -222,7 +222,7 @@ const ReviewModal = ({ media, mediaType, onClose }) => {
               <button
                 onClick={handleSubmit}
                 disabled={!selectedTag}
-                className="flex-1 flex items-center justify-center gap-2.5 py-4 rounded-xl bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-white font-bold text-base transition-all hover:scale-[1.02] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100"
+                className="flex-1 flex items-center justify-center gap-2.5 py-4 rounded-xl bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)] font-bold text-base transition-all hover:scale-[1.02] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100"
               >
                 <Send className="w-4 h-4" />
                 {existing ? 'Update Review' : 'Submit Review'}
