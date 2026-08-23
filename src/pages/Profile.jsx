@@ -76,13 +76,17 @@ const Profile = () => {
               reviews.map(review => {
                 const tag = getRatingTag(review.tag);
                 return (
-                  <div key={`${review.media_type}-${review.id}`} className="bg-[#121620] border border-white/5 rounded-2xl p-6 flex flex-col transition-all hover:bg-[#161b27] hover:border-white/10">
+                  <Link 
+                    key={`${review.media_type}-${review.id}`} 
+                    to={`/${review.media_type || 'movie'}/${review.id}`}
+                    className="bg-[#121620] border border-white/5 rounded-2xl p-6 flex flex-col transition-all hover:bg-[#161b27] hover:border-[var(--color-accent)] hover:shadow-[0_0_20px_-5px_var(--color-accent)] group/review block"
+                  >
                     <div className="flex items-center gap-4 mb-4 border-b border-white/5 pb-4">
                       {review.poster_path && (
-                        <img src={`https://image.tmdb.org/t/p/w92${review.poster_path}`} alt={review.title} className="w-12 h-16 rounded-md object-cover" />
+                        <img src={`https://image.tmdb.org/t/p/w92${review.poster_path}`} alt={review.title} className="w-12 h-16 rounded-md object-cover transition-transform group-hover/review:scale-105" />
                       )}
                       <div>
-                        <h4 className="text-white font-bold text-lg leading-tight line-clamp-1">{review.title}</h4>
+                        <h4 className="text-white font-bold text-lg leading-tight line-clamp-1 group-hover/review:text-[var(--color-accent)] transition-colors">{review.title}</h4>
                         <div className={`inline-flex items-center gap-1 mt-2 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border ${tag.bg} ${tag.border} ${tag.color}`}>
                           <ReviewIcon iconName={tag.label.includes('Masterpiece') ? 'Trophy' : tag.label.includes('Must Watch') ? 'ThumbsUp' : tag.label.includes('Timepass') ? 'Coffee' : 'XCircle'} className="w-3 h-3" />
                           {tag.label.replace(/[^a-zA-Z ]/g, '')}
@@ -90,7 +94,7 @@ const Profile = () => {
                       </div>
                     </div>
                     <p className="text-gray-400 text-sm leading-relaxed">{review.opinion || "No written review."}</p>
-                  </div>
+                  </Link>
                 );
               })
             ) : (
@@ -172,15 +176,33 @@ const Profile = () => {
           
           {currentUser && (
             <div className="flex flex-wrap items-center justify-center md:justify-start gap-4">
-              <div className="bg-white/5 px-4 py-2 rounded-full border border-white/10 text-sm font-semibold text-white">
+              <button 
+                onClick={() => {
+                  setActiveTab('watchlist');
+                  document.getElementById('profile-tabs')?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="bg-white/5 hover:bg-white/10 px-4 py-2 rounded-full border border-white/10 hover:border-[var(--color-accent)] text-sm font-semibold text-white transition-all cursor-pointer active:scale-95 shadow-lg"
+              >
                 <span className="text-[var(--color-accent)] mr-2">{watchlist.length}</span> Watchlist
-              </div>
-              <div className="bg-white/5 px-4 py-2 rounded-full border border-white/10 text-sm font-semibold text-white">
+              </button>
+              <button 
+                onClick={() => {
+                  setActiveTab('watched');
+                  document.getElementById('profile-tabs')?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="bg-white/5 hover:bg-white/10 px-4 py-2 rounded-full border border-white/10 hover:border-[var(--color-accent)] text-sm font-semibold text-white transition-all cursor-pointer active:scale-95 shadow-lg"
+              >
                 <span className="text-[var(--color-accent)] mr-2">{watched.length}</span> Watched
-              </div>
-              <div className="bg-white/5 px-4 py-2 rounded-full border border-white/10 text-sm font-semibold text-white">
+              </button>
+              <button 
+                onClick={() => {
+                  setActiveTab('reviews');
+                  document.getElementById('profile-tabs')?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="bg-white/5 hover:bg-white/10 px-4 py-2 rounded-full border border-white/10 hover:border-[var(--color-accent)] text-sm font-semibold text-white transition-all cursor-pointer active:scale-95 shadow-lg"
+              >
                 <span className="text-[var(--color-accent)] mr-2">{reviews.length}</span> Reviews
-              </div>
+              </button>
             </div>
           )}
         </div>
@@ -234,7 +256,7 @@ const Profile = () => {
       {currentUser ? (
         <>
           {/* Tabs */}
-          <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 mb-12 border-b border-white/5 pb-6">
+          <div id="profile-tabs" className="flex flex-wrap items-center justify-center md:justify-start gap-4 mb-12 border-b border-white/5 pb-6">
             <button 
               onClick={() => setActiveTab('watchlist')}
               className={`relative group flex items-center gap-2 px-6 py-3 rounded-2xl font-bold whitespace-nowrap transition-all duration-300 overflow-hidden ${
