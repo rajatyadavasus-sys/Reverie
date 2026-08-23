@@ -158,9 +158,9 @@ const HeroSection = () => {
             </div>
           </div>
 
-          <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[var(--color-accent)]/10 backdrop-blur-md border border-[var(--color-accent)]/30 mb-8 shadow-[0_0_20px_var(--color-accent)_inset,0_0_15px_rgba(255,255,255,0.05)]">
-            <Sparkles className="w-5 h-5 text-[var(--color-accent)] animate-pulse" />
-            <span className="text-sm font-bold tracking-widest text-white uppercase">Discover Movies Through Emotion</span>
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 backdrop-blur-md border border-white/10 mb-3 shadow-[0_0_15px_rgba(255,255,255,0.05)]">
+            <Sparkles className="w-5 h-5 text-[var(--color-accent)]" />
+            <span className="text-sm font-semibold tracking-wide text-gray-200">Discover Movies Through Emotion</span>
           </div>
           
           <h1 className="text-5xl md:text-7xl lg:text-[5.5rem] font-black text-white leading-[1.1] mb-6 tracking-tight drop-shadow-2xl">
