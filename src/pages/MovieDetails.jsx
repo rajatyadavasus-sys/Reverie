@@ -66,7 +66,8 @@ const MediaDetails = () => {
   const [globalReviews, setGlobalReviews]                      = useState([]);
 
   // Build enriched user review with display name + photo for the reviews section
-  const rawReview = getReview(id);
+  const mediaType = isTV ? 'tv' : 'movie';
+  const rawReview = getReview(Number(id), mediaType);
   const enrichedUserReview = rawReview ? {
     ...rawReview,
     authorName: currentUser?.displayName || 'Reverie User',
@@ -78,16 +79,18 @@ const MediaDetails = () => {
       setLoading(true);
       window.scrollTo(0, 0);
       try {
-        const mediaType = isTV ? 'tv' : 'movie';
-        
         // Parallel fetch for TMDB + Firebase Global Reviews
         const globalReviewsPromise = getDocs(
           query(
             collection(db, 'global_reviews'),
-            where('id', '==', Number(id)),
-            where('media_type', '==', mediaType)
+            where('id', '==', Number(id))
           )
-        ).then(snapshot => snapshot.docs.map(doc => doc.data())).catch(() => []);
+        )
+        .then(snapshot => snapshot.docs.map(doc => doc.data()).filter(d => d.media_type === mediaType))
+        .catch(err => {
+          console.error('Error fetching global reviews:', err);
+          return [];
+        });
 
         if (isTV) {
           const [details, recs, sim, credits, videos, reviewsData, gReviews] = await Promise.all([
@@ -137,14 +140,12 @@ const MediaDetails = () => {
   if (loading) return <div className="pt-32"><LoadingSpinner /></div>;
   if (!media) return <div className="pt-32 text-center text-white text-xl">Not found.</div>;
 
-  const mediaType  = isTV ? 'tv' : 'movie';
   const title      = media.title || media.name;
   const releaseDate = media.release_date || media.first_air_date;
   const year       = releaseDate ? new Date(releaseDate).getFullYear() : 'N/A';
   const runtime    = isTV
     ? (media.episode_run_time?.[0] ? `${media.episode_run_time[0]} min/ep` : null)
     : (media.runtime ? `${media.runtime} min` : null);
-
   const isSaved    = isInWatchlist(media.id, mediaType);
   const isMarked   = isWatched(media.id, mediaType);
   const userReview = getReview(media.id, mediaType);
