@@ -81,6 +81,7 @@ const ReviewCard = ({ review, isCurrentUser = false, isReverieUser = false }) =>
 };
 
 const TMDBReviews = ({ reviews, globalReviews = [], userReview }) => {
+  const { currentUser } = useAuth();
   const [visibleCount, setVisibleCount] = useState(6);
 
   // Reverie reviews use 'tag' and 'opinion', not 'text'
@@ -93,7 +94,7 @@ const TMDBReviews = ({ reviews, globalReviews = [], userReview }) => {
   // Filter out the user's own global review so we don't show it twice
   // (since we already show it at the very top via `userReview`)
   const otherGlobalReviews = globalReviews.filter(
-    (gr) => !userReview || gr.authorUid !== userReview.authorUid
+    (gr) => !(currentUser && gr.authorUid === currentUser.uid)
   );
 
   const totalReviews = (otherGlobalReviews.length) + (reviews?.length || 0);
