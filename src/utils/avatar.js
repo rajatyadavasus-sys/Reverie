@@ -18,5 +18,5 @@ export const getAvatarUrl = (userOrReview, isPlatformUser = true, isCurrentUser 
   if (isFemale) {
     return `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(seedName)}&backgroundColor=transparent&hair=long01,long02,long03,long04,long05`;
   }
-  return `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(seedName)}&backgroundColor=transparent&glassesProbability=100&hair=short16,short01,short02`;
+  return `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(seedName)}&backgroundColor=transparent&glassesProbability=100&hair=short16`;
 };
