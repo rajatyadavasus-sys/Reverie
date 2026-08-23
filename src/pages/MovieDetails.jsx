@@ -17,6 +17,7 @@ import { Star, Clock, Calendar, Heart, Tv, Film, Eye, EyeOff, MessageSquarePlus,
 import { useWatchlist } from '../context/WatchlistContext';
 import { useWatched } from '../context/WatchedContext';
 import { useReviews } from '../context/ReviewContext';
+import { useAuth } from '../context/AuthContext';
 import { getReviewTag, getTagColors, ReviewIcon } from '../utils/ratings';
 
 const ReviewTag = ({ voteAverage, voteCount }) => {
@@ -58,7 +59,16 @@ const MediaDetails = () => {
   const { isInWatchlist, addToWatchlist, removeFromWatchlist } = useWatchlist();
   const { isWatched, markWatched, unmarkWatched }              = useWatched();
   const { getReview }                                          = useReviews();
+  const { currentUser }                                        = useAuth();
   const [showReviewModal, setShowReviewModal]                  = useState(false);
+
+  // Build enriched user review with display name + photo for the reviews section
+  const rawReview = getReview(id);
+  const enrichedUserReview = rawReview ? {
+    ...rawReview,
+    authorName: currentUser?.displayName || 'Reverie User',
+    photoURL: currentUser?.photoURL || null,
+  } : null;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -410,8 +420,8 @@ const MediaDetails = () => {
         </div>
       )}
 
-      {/* TMDB Reviews */}
-      <TMDBReviews reviews={tmdbReviews} />
+      {/* TMDB Reviews — user review shown first */}
+      <TMDBReviews reviews={tmdbReviews} userReview={enrichedUserReview} />
 
       {/* Similar titles */}
       {similar.length > 0 && (

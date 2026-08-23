@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { searchMulti } from '../services/tmdb';
 import MovieCard from '../components/common/MovieCard';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import { Search as SearchIcon, X } from 'lucide-react';
 
 const Search = () => {
-  const [query, setQuery] = useState('');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [query, setQuery] = useState(searchParams.get('q') || '');
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
@@ -28,10 +30,20 @@ const Search = () => {
     }
   }, []);
 
+  // Auto-search on initial load if ?q= param exists
   useEffect(() => {
+    const urlQ = searchParams.get('q');
+    if (urlQ) handleSearch(urlQ);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Debounced search + sync URL as user types
+  useEffect(() => {
+    if (query.trim()) setSearchParams({ q: query }, { replace: true });
     const timer = setTimeout(() => handleSearch(query), 500);
     return () => clearTimeout(timer);
   }, [query, handleSearch]);
+
 
   return (
     <div className="container mx-auto px-8 lg:px-16 py-16 min-h-screen">

@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import HeroSection from '../components/common/HeroSection';
-import LoadMoreGrid from '../components/common/LoadMoreGrid';
+import MovieCard from '../components/common/MovieCard';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import { getTrendingMovies, getTrendingTV } from '../services/tmdb';
-import { Link } from 'react-router-dom';
-import { Film, Tv } from 'lucide-react';
+import { Film, Tv, ChevronDown } from 'lucide-react';
 
 const BEARER = () => import.meta.env.VITE_TMDB_API_KEY;
 const trendingMovieFetch = (page) =>
@@ -16,13 +15,14 @@ const trendingTVFetch = (page) =>
     headers: { accept: 'application/json', Authorization: `Bearer ${BEARER()}` },
   }).then(r => r.json());
 
-
+const INITIAL_COUNT = 6;
 
 const Home = () => {
   const [trendingMovies, setTrendingMovies] = useState([]);
   const [trendingTV, setTrendingTV]         = useState([]);
   const [activeTab, setActiveTab]           = useState('movies');
   const [loading, setLoading]               = useState(true);
+  const [showAll, setShowAll]               = useState(false);
 
   useEffect(() => {
     const shuffle = (array) => {
@@ -47,8 +47,8 @@ const Home = () => {
         const allTV = [...t1.results, ...t2.results];
 
         const updateGrid = () => {
-          setTrendingMovies(shuffle(allMovies).slice(0, 10));
-          setTrendingTV(shuffle(allTV).slice(0, 10));
+          setTrendingMovies(shuffle(allMovies));
+          setTrendingTV(shuffle(allTV));
         };
 
         updateGrid();
@@ -65,6 +65,9 @@ const Home = () => {
     fetchTrending().then(fn => { if (fn) cleanup = fn; });
     return () => { if (cleanup) cleanup(); };
   }, []);
+
+  const activeItems = activeTab === 'movies' ? trendingMovies : trendingTV;
+  const visibleItems = showAll ? activeItems : activeItems.slice(0, INITIAL_COUNT);
 
   return (
     <div className="w-full">
@@ -89,7 +92,7 @@ const Home = () => {
 
           <div className="flex items-center gap-2">
             <button
-              onClick={() => setActiveTab('movies')}
+              onClick={() => { setActiveTab('movies'); setShowAll(false); }}
               className={`flex items-center gap-2 px-6 py-2.5 rounded-full font-semibold text-sm transition-all duration-200 ${
                 activeTab === 'movies'
                   ? 'bg-[var(--color-accent)] text-white shadow-lg shadow-purple-900/30'
@@ -99,7 +102,7 @@ const Home = () => {
               <Film className="w-4 h-4" /> Movies
             </button>
             <button
-              onClick={() => setActiveTab('tv')}
+              onClick={() => { setActiveTab('tv'); setShowAll(false); }}
               className={`flex items-center gap-2 px-6 py-2.5 rounded-full font-semibold text-sm transition-all duration-200 ${
                 activeTab === 'tv'
                   ? 'bg-[var(--color-accent)] text-white shadow-lg shadow-purple-900/30'
@@ -113,20 +116,30 @@ const Home = () => {
 
         {loading ? (
           <LoadingSpinner />
-        ) : activeTab === 'movies' ? (
-          <LoadMoreGrid
-            key="trending-movies"
-            initialItems={trendingMovies}
-            mediaType="movie"
-            fetchMore={trendingMovieFetch}
-          />
         ) : (
-          <LoadMoreGrid
-            key="trending-tv"
-            initialItems={trendingTV}
-            mediaType="tv"
-            fetchMore={trendingTVFetch}
-          />
+          <>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6">
+              {visibleItems.map(item => (
+                <MovieCard
+                  key={`${activeTab}-${item.id}`}
+                  item={item}
+                  mediaType={activeTab === 'movies' ? 'movie' : 'tv'}
+                />
+              ))}
+            </div>
+
+            {!showAll && activeItems.length > INITIAL_COUNT && (
+              <div className="mt-12 flex justify-center">
+                <button
+                  onClick={() => setShowAll(true)}
+                  className="flex items-center gap-2 px-8 py-3 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-white font-semibold transition-all hover:scale-105"
+                >
+                  <ChevronDown className="w-5 h-5" />
+                  Show More
+                </button>
+              </div>
+            )}
+          </>
         )}
       </section>
     </div>
@@ -134,3 +147,4 @@ const Home = () => {
 };
 
 export default Home;
+

@@ -1,26 +1,66 @@
 import React, { useState } from 'react';
-import { Star, MessageSquare } from 'lucide-react';
+import { Star, MessageSquare, ShieldCheck } from 'lucide-react';
 
 const getRatingTag = (rating) => {
   if (!rating) return { label: 'Unrated Review', color: 'text-gray-400', bg: 'bg-gray-500/10', border: 'border-gray-500/20' };
-  
-  if (rating >= 8) {
-    return { label: '🌟 Masterpiece', color: 'text-yellow-400', bg: 'bg-yellow-500/10', border: 'border-yellow-500/20', glow: 'shadow-[0_0_15px_rgba(250,204,21,0.2)]' };
-  } else if (rating >= 6) {
-    return { label: '👍 Good Watch', color: 'text-blue-400', bg: 'bg-blue-500/10', border: 'border-blue-500/20' };
-  } else if (rating >= 4) {
-    return { label: '🤔 Mixed', color: 'text-orange-400', bg: 'bg-orange-500/10', border: 'border-orange-500/20' };
-  } else {
-    return { label: '👎 Not Recommended', color: 'text-red-400', bg: 'bg-red-500/10', border: 'border-red-500/20' };
-  }
+  if (rating >= 8) return { label: '🌟 Masterpiece', color: 'text-yellow-400', bg: 'bg-yellow-500/10', border: 'border-yellow-500/20', glow: 'shadow-[0_0_15px_rgba(250,204,21,0.2)]' };
+  if (rating >= 6) return { label: '👍 Good Watch', color: 'text-blue-400', bg: 'bg-blue-500/10', border: 'border-blue-500/20' };
+  if (rating >= 4) return { label: '🤔 Mixed', color: 'text-orange-400', bg: 'bg-orange-500/10', border: 'border-orange-500/20' };
+  return { label: '👎 Not Recommended', color: 'text-red-400', bg: 'bg-red-500/10', border: 'border-red-500/20' };
 };
 
-const TMDBReviews = ({ reviews }) => {
+const ReviewCard = ({ review, isUser = false }) => {
+  const rating = review.author_details?.rating ?? review.rating;
+  const tag = getRatingTag(rating);
+  const avatar = review.author_details?.avatar_path;
+  const avatarUrl = isUser
+    ? (review.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(review.authorName || 'You')}&background=7c3aed&color=fff`)
+    : avatar
+      ? avatar.startsWith('/https') ? avatar.substring(1) : `https://image.tmdb.org/t/p/w150_and_h150_face${avatar}`
+      : `https://ui-avatars.com/api/?name=${encodeURIComponent(review.author)}&background=random`;
+
+  const authorName = isUser ? (review.authorName || 'You') : review.author;
+  const content = isUser ? review.text : review.content?.replace(/_/g, '').replace(/\*/g, '');
+
+  return (
+    <div className={`relative bg-[#121620] border rounded-2xl p-6 flex flex-col transition-all hover:bg-[#161b27] ${isUser ? 'border-[var(--color-accent)]/40 shadow-[0_0_20px_rgba(124,58,237,0.1)]' : 'border-white/5'}`}>
+      {isUser && (
+        <div className="absolute top-4 right-4 flex items-center gap-1 bg-[var(--color-accent)]/20 border border-[var(--color-accent)]/30 text-[var(--color-accent)] text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full">
+          <ShieldCheck className="w-3 h-3" />
+          Your Review
+        </div>
+      )}
+
+      <div className="flex items-start gap-3 mb-4 pr-24">
+        <img src={avatarUrl} alt={authorName} className="w-10 h-10 rounded-full object-cover border border-white/10 flex-shrink-0" />
+        <div>
+          <h4 className="text-white font-bold text-sm">{authorName}</h4>
+          {rating && (
+            <div className="flex items-center gap-1 mt-0.5">
+              <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" />
+              <span className="text-xs text-gray-400">{rating}/10</span>
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className={`inline-flex self-start px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border mb-4 ${tag.bg} ${tag.border} ${tag.color} ${tag.glow || ''}`}>
+        {tag.label}
+      </div>
+
+      <p className="text-gray-400 text-sm leading-relaxed line-clamp-6 flex-1">{content}</p>
+    </div>
+  );
+};
+
+const TMDBReviews = ({ reviews, userReview }) => {
   const [visibleCount, setVisibleCount] = useState(6);
 
-  if (!reviews || reviews.length === 0) return null;
+  const hasUserReview = userReview && userReview.text;
+  const hasAny = hasUserReview || (reviews && reviews.length > 0);
+  if (!hasAny) return null;
 
-  const hasMore = visibleCount < reviews.length;
+  const hasMore = visibleCount < (reviews?.length || 0);
   const showMore = () => setVisibleCount((prev) => prev + 6);
 
   return (
@@ -31,49 +71,18 @@ const TMDBReviews = ({ reviews }) => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {reviews.slice(0, visibleCount).map((review) => {
-          const rating = review.author_details?.rating;
-          const tag = getRatingTag(rating);
-          const avatar = review.author_details?.avatar_path;
-          const avatarUrl = avatar 
-            ? avatar.startsWith('/https') 
-              ? avatar.substring(1) 
-              : `https://image.tmdb.org/t/p/w150_and_h150_face${avatar}`
-            : `https://ui-avatars.com/api/?name=${encodeURIComponent(review.author)}&background=random`;
+        {/* User's own Reverie review — always first, pinned */}
+        {hasUserReview && <ReviewCard review={userReview} isUser={true} />}
 
-          return (
-            <div key={review.id} className="bg-[#121620] border border-white/5 rounded-2xl p-6 flex flex-col transition-all hover:bg-[#161b27]">
-              
-              <div className="flex items-start justify-between mb-4">
-                <div className="flex items-center gap-3">
-                  <img src={avatarUrl} alt={review.author} className="w-10 h-10 rounded-full object-cover border border-white/10" />
-                  <div>
-                    <h4 className="text-white font-bold text-sm truncate max-w-[150px]">{review.author}</h4>
-                    {rating && (
-                      <div className="flex items-center gap-1 mt-0.5">
-                        <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" />
-                        <span className="text-xs text-gray-400">{rating}/10</span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-                
-                <div className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border ${tag.bg} ${tag.border} ${tag.color} ${tag.glow || ''}`}>
-                  {tag.label}
-                </div>
-              </div>
-
-              <div className="text-gray-400 text-sm leading-relaxed line-clamp-6 flex-1">
-                {review.content.replace(/_/g, '').replace(/\*/g, '')}
-              </div>
-            </div>
-          );
-        })}
+        {/* TMDB community reviews */}
+        {reviews?.slice(0, visibleCount).map((review) => (
+          <ReviewCard key={review.id} review={review} />
+        ))}
       </div>
 
       {hasMore && (
         <div className="mt-10 flex justify-center">
-          <button 
+          <button
             onClick={showMore}
             className="px-8 py-3 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-white font-semibold transition-all hover:scale-105"
           >
