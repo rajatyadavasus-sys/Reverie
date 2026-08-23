@@ -73,7 +73,8 @@ const ReviewCard = ({ review, isCurrentUser = false, isReverieUser = false }) =>
 const TMDBReviews = ({ reviews, globalReviews = [], userReview }) => {
   const [visibleCount, setVisibleCount] = useState(6);
 
-  const hasUserReview = userReview && userReview.text;
+  // Reverie reviews use 'tag' and 'opinion', not 'text'
+  const hasUserReview = userReview && (userReview.tag || userReview.opinion);
   const hasGlobalReviews = globalReviews && globalReviews.length > 0;
   const hasTMDBReviews = reviews && reviews.length > 0;
 
