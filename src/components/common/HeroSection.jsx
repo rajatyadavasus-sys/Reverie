@@ -158,9 +158,9 @@ const HeroSection = () => {
             </div>
           </div>
 
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 backdrop-blur-md border border-white/10 mb-3 shadow-[0_0_15px_rgba(255,255,255,0.05)]">
+          <div className="inline-flex items-center gap-2 mb-3">
             <Sparkles className="w-5 h-5 text-[var(--color-accent)]" />
-            <span className="text-sm font-semibold tracking-wide text-gray-200">Discover Movies Through Emotion</span>
+            <span className="text-sm font-semibold tracking-wide text-gray-400">Discover Movies Through Emotion</span>
           </div>
           
           <h1 className="text-5xl md:text-7xl lg:text-[5.5rem] font-black text-white leading-[1.1] mb-6 tracking-tight drop-shadow-2xl">
