@@ -31,8 +31,11 @@ const ReviewCard = ({ review, isCurrentUser = false, isReverieUser = false }) =>
     : (review.authorEmail || review.authorUid || review.authorName || review.author || 'reverie');
 
   const seedName = isCurrentUser ? (currentUser?.displayName || currentUser?.email || 'User') : (review.authorName || review.author || 'User');
+  const userPhoto = isCurrentUser ? currentUser?.photoURL : review.photoURL;
+  const isCustomUploaded = userPhoto?.includes('firebasestorage');
+  
   const avatarUrl = isPlatformUser
-    ? ((isCurrentUser ? currentUser?.photoURL : review.photoURL) || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(seedName)}&backgroundColor=aa3bff,0ea5e9&textColor=ffffff`)
+    ? (isCustomUploaded ? userPhoto : `https://ui-avatars.com/api/?name=${encodeURIComponent(seedName)}&background=aa3bff&color=fff&rounded=true&bold=true`)
     : review.author_details?.avatar_path
       ? review.author_details.avatar_path.startsWith('/https') ? review.author_details.avatar_path.substring(1) : `https://image.tmdb.org/t/p/w150_and_h150_face${review.author_details.avatar_path}`
       : `https://ui-avatars.com/api/?name=${encodeURIComponent(review.author)}&background=random`;

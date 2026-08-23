@@ -84,9 +84,10 @@ const Navbar = () => {
   const { currentUser, logout, promptLogin } = useAuth();
   const { theme, setTheme, themes } = useTheme();
 
-  // Use custom photoURL if set, otherwise fallback to premium initials
+  // Use custom photoURL if uploaded via our system, otherwise fallback to premium initials
   const seedName = currentUser?.displayName || currentUser?.email || 'User';
-  const avatarUrl = currentUser?.photoURL || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(seedName)}&backgroundColor=aa3bff,0ea5e9&textColor=ffffff`;
+  const isCustomUploaded = currentUser?.photoURL?.includes('firebasestorage');
+  const avatarUrl = isCustomUploaded ? currentUser.photoURL : `https://ui-avatars.com/api/?name=${encodeURIComponent(seedName)}&background=aa3bff&color=fff&rounded=true&bold=true`;
 
   const navLinkClass = ({ isActive }) => 
     `text-lg font-medium transition-colors duration-300 ${isActive ? 'text-[var(--color-accent)]' : 'text-gray-300 hover:text-white'}`;

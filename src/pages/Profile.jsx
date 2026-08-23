@@ -133,7 +133,8 @@ const Profile = () => {
   };
 
   const seedName = currentUser?.displayName || currentUser?.email || 'User';
-  const avatarUrl = currentUser?.photoURL || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(seedName)}&backgroundColor=aa3bff,0ea5e9&textColor=ffffff`;
+  const isCustomUploaded = currentUser?.photoURL?.includes('firebasestorage');
+  const avatarUrl = isCustomUploaded ? currentUser.photoURL : `https://ui-avatars.com/api/?name=${encodeURIComponent(seedName)}&background=aa3bff&color=fff&rounded=true&bold=true`;
 
   return (
     <div className="container mx-auto px-8 lg:px-16 py-12">
