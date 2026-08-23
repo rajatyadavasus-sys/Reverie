@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Star, MessageSquare, ShieldCheck } from 'lucide-react';
 
-const getRatingTag = (val) => {
+export const getRatingTag = (val) => {
   if (!val) return { label: 'Unrated Review', color: 'text-gray-400', bg: 'bg-gray-500/10', border: 'border-gray-500/20' };
   
   if (typeof val === 'string') {

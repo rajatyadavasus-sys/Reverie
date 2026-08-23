@@ -4,6 +4,7 @@ import { WatchlistProvider } from './context/WatchlistContext';
 import { WatchedProvider }   from './context/WatchedContext';
 import { ReviewProvider }    from './context/ReviewContext';
 import { AuthProvider }      from './context/AuthContext';
+import { ThemeProvider }     from './context/ThemeContext';
 import MainLayout from './components/layout/MainLayout';
 import Home from './pages/Home';
 import MovieDetails from './pages/MovieDetails';
@@ -13,6 +14,7 @@ import EmotionCategory from './pages/EmotionCategory';
 import Emotions from './pages/Emotions';
 import Watchlist from './pages/Watchlist';
 import ActorProfile from './pages/ActorProfile';
+import Profile from './pages/Profile';
 
 const NotFound = () => (
   <div className="flex flex-col items-center justify-center h-[60vh] text-center px-8">
@@ -24,7 +26,8 @@ const NotFound = () => (
 
 function App() {
   return (
-    <AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
       <WatchlistProvider>
         <WatchedProvider>
           <ReviewProvider>
@@ -37,6 +40,7 @@ function App() {
                   <Route path="emotions" element={<Emotions />} />
                   <Route path="emotion/:emotion" element={<EmotionCategory />} />
                   <Route path="watchlist" element={<Watchlist />} />
+                  <Route path="profile" element={<Profile />} />
                   <Route path="movie/:id" element={<MovieDetails />} />
                   <Route path="tv/:id" element={<MovieDetails />} />
                   <Route path="person/:id" element={<ActorProfile />} />
@@ -47,7 +51,8 @@ function App() {
           </ReviewProvider>
         </WatchedProvider>
       </WatchlistProvider>
-    </AuthProvider>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
 
