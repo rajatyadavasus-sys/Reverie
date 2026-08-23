@@ -19,6 +19,8 @@ import { useWatched } from '../context/WatchedContext';
 import { useReviews } from '../context/ReviewContext';
 import { useAuth } from '../context/AuthContext';
 import { getReviewTag, getTagColors, ReviewIcon } from '../utils/ratings';
+import { collection, query, where, getDocs } from 'firebase/firestore';
+import { db } from '../config/firebase';
 
 const ReviewTag = ({ voteAverage, voteCount }) => {
   const tag = getReviewTag(voteAverage, voteCount);
@@ -61,6 +63,7 @@ const MediaDetails = () => {
   const { getReview }                                          = useReviews();
   const { currentUser }                                        = useAuth();
   const [showReviewModal, setShowReviewModal]                  = useState(false);
+  const [globalReviews, setGlobalReviews]                      = useState([]);
 
   // Build enriched user review with display name + photo for the reviews section
   const rawReview = getReview(id);
@@ -75,34 +78,49 @@ const MediaDetails = () => {
       setLoading(true);
       window.scrollTo(0, 0);
       try {
+        const mediaType = isTV ? 'tv' : 'movie';
+        
+        // Parallel fetch for TMDB + Firebase Global Reviews
+        const globalReviewsPromise = getDocs(
+          query(
+            collection(db, 'global_reviews'),
+            where('id', '==', Number(id)),
+            where('media_type', '==', mediaType)
+          )
+        ).then(snapshot => snapshot.docs.map(doc => doc.data())).catch(() => []);
+
         if (isTV) {
-          const [details, recs, sim, credits, videos, reviewsData] = await Promise.all([
+          const [details, recs, sim, credits, videos, reviewsData, gReviews] = await Promise.all([
             getTVDetails(id),
             getTVRecommendations(id),
             getSimilarTVShows(id),
             getTVCredits(id),
             getTVVideos(id),
             getTVReviews(id),
+            globalReviewsPromise
           ]);
           setMedia(details);
           setSimilar(recs.results?.length > 0 ? recs.results : (sim.results || []));
           setCast(credits.cast || []);
           setTmdbReviews(reviewsData.results || []);
+          setGlobalReviews(gReviews);
           const trailer = pickTrailer(videos.results);
           if (trailer) setTrailerKey(trailer.key);
         } else {
-          const [details, recs, sim, credits, videos, reviewsData] = await Promise.all([
+          const [details, recs, sim, credits, videos, reviewsData, gReviews] = await Promise.all([
             getMovieDetails(id),
             getMovieRecommendations(id),
             getSimilarMovies(id),
             getMovieCredits(id),
             getMovieVideos(id),
             getMovieReviews(id),
+            globalReviewsPromise
           ]);
           setMedia(details);
           setSimilar(recs.results?.length > 0 ? recs.results : (sim.results || []));
           setCast(credits.cast || []);
           setTmdbReviews(reviewsData.results || []);
+          setGlobalReviews(gReviews);
           const trailer = pickTrailer(videos.results);
           if (trailer) setTrailerKey(trailer.key);
         }
@@ -112,7 +130,8 @@ const MediaDetails = () => {
         setLoading(false);
       }
     };
-    if (id) fetchData();
+
+    fetchData();
   }, [id, isTV]);
 
   if (loading) return <div className="pt-32"><LoadingSpinner /></div>;
@@ -421,7 +440,7 @@ const MediaDetails = () => {
       )}
 
       {/* TMDB Reviews — user review shown first */}
-      <TMDBReviews reviews={tmdbReviews} userReview={enrichedUserReview} />
+      <TMDBReviews reviews={tmdbReviews} globalReviews={globalReviews} userReview={enrichedUserReview} />
 
       {/* Similar titles */}
       {similar.length > 0 && (

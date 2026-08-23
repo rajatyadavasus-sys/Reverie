@@ -1,12 +1,9 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useAuth } from './AuthContext';
 import { db } from '../config/firebase';
-import { doc, onSnapshot, setDoc } from 'firebase/firestore';
+import { doc, onSnapshot, setDoc, deleteDoc } from 'firebase/firestore';
 
 const ReviewContext = createContext();
-
-// Review shape:
-// { id, media_type, title, poster_path, tag, opinion, createdAt }
 
 export const ReviewProvider = ({ children }) => {
   const { currentUser, promptLogin } = useAuth();
@@ -33,16 +30,7 @@ export const ReviewProvider = ({ children }) => {
     return () => unsubscribe();
   }, [currentUser]);
 
-  const updateFirebase = async (newList) => {
-    if (!currentUser) return;
-    try {
-      await setDoc(doc(db, 'users', currentUser.uid), { reviews: newList }, { merge: true });
-    } catch (err) {
-      console.error("Error updating reviews in Firebase:", err);
-    }
-  };
-
-  const addReview = (review) => {
+  const addReview = async (review) => {
     if (!currentUser) {
       promptLogin();
       return;
@@ -58,15 +46,38 @@ export const ReviewProvider = ({ children }) => {
     );
     
     const newList = [newReview, ...filtered];
-    setReviews(newList);
-    updateFirebase(newList);
+    setReviews(newList); // Optimistic UI update
+
+    try {
+      // 1. Update personal list
+      await setDoc(doc(db, 'users', currentUser.uid), { reviews: newList }, { merge: true });
+      
+      // 2. Add to global_reviews collection
+      const globalReviewId = `${newReview.media_type}_${newReview.id}_${currentUser.uid}`;
+      await setDoc(doc(db, 'global_reviews', globalReviewId), {
+        ...newReview,
+        authorName: currentUser.displayName || 'Reverie User',
+        photoURL: currentUser.photoURL || null,
+        authorUid: currentUser.uid,
+        updatedAt: new Date().toISOString()
+      });
+    } catch (err) {
+      console.error("Error updating reviews in Firebase:", err);
+    }
   };
 
-  const removeReview = (id, media_type) => {
+  const removeReview = async (id, media_type) => {
     if (!currentUser) return;
     const newList = reviews.filter(r => !(r.id === id && r.media_type === media_type));
-    setReviews(newList);
-    updateFirebase(newList);
+    setReviews(newList); // Optimistic UI update
+    
+    try {
+      await setDoc(doc(db, 'users', currentUser.uid), { reviews: newList }, { merge: true });
+      const globalReviewId = `${media_type}_${id}_${currentUser.uid}`;
+      await deleteDoc(doc(db, 'global_reviews', globalReviewId));
+    } catch (err) {
+      console.error("Error removing review from Firebase:", err);
+    }
   };
 
   const getReview = (id, media_type) =>
