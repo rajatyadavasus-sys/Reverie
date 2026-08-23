@@ -9,7 +9,7 @@ const MovieCard = ({ item, mediaType = 'movie' }) => {
   const releaseDate = item.release_date || item.first_air_date;
   const year = releaseDate ? new Date(releaseDate).getFullYear() : 'N/A';
   const posterPath = item.poster_path
-    ? `https://image.tmdb.org/t/p/w500${item.poster_path}`
+    ? `/tmdb-images/w500${item.poster_path}`
     : null;
 
   const route = type === 'tv' ? `/tv/${item.id}` : `/movie/${item.id}`;

@@ -67,7 +67,7 @@ const MarqueeColumn = ({ items, reverse = false }) => {
           <div key={`${item.id}-${idx}`} className="w-full aspect-[2/3] rounded-xl overflow-hidden shrink-0 bg-gray-900">
             {item.poster_path ? (
               <img
-                src={`https://image.tmdb.org/t/p/w300${item.poster_path}`}
+                src={`/tmdb-images/w300${item.poster_path}`}
                 alt={item.title}
                 className="w-full h-full object-cover"
                 loading="lazy"
@@ -101,7 +101,7 @@ const HeroSection = () => {
     // Fetch multiple pages so we have a large pool to shuffle
     Promise.all([
       getTrendingMovies('week'),
-      fetch(`https://api.themoviedb.org/3/trending/movie/week?page=2`, {
+      fetch(`/api/tmdb/trending/movie/week?page=2`, {
         headers: { accept: 'application/json', Authorization: `Bearer ${import.meta.env.VITE_TMDB_API_KEY}` }
       }).then(r => r.json())
     ]).then(([page1, page2]) => {
@@ -148,7 +148,7 @@ const HeroSection = () => {
                   className="flex-shrink-0 w-36 sm:w-44 aspect-[2/3] rounded-2xl overflow-hidden shadow-2xl border border-white/10 transition-transform active:scale-95"
                 >
                   <img 
-                    src={`https://image.tmdb.org/t/p/w500${m.poster_path}`}
+                    src={`/tmdb-images/w500${m.poster_path}`}
                     alt={m.title}
                     className="w-full h-full object-cover"
                     loading="lazy"

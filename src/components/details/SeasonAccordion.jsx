@@ -7,7 +7,7 @@ import TrailerModal from './TrailerModal';
 const EpisodeCard = ({ episode }) => {
   const [expanded, setExpanded] = useState(false);
   const stillUrl = episode.still_path
-    ? `https://image.tmdb.org/t/p/w300${episode.still_path}`
+    ? `/tmdb-images/w300${episode.still_path}`
     : null;
   const airDate = episode.air_date
     ? new Date(episode.air_date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
@@ -94,7 +94,7 @@ const SeasonCast = ({ cast = [] }) => {
             <div className="w-9 h-9 rounded-full overflow-hidden bg-white/10 flex-shrink-0 group-hover:border-[var(--color-accent)]/40 border border-transparent transition-all">
               {person.profile_path ? (
                 <img
-                  src={`https://image.tmdb.org/t/p/w45${person.profile_path}`}
+                  src={`/tmdb-images/w45${person.profile_path}`}
                   alt={person.name}
                   className="w-full h-full object-cover"
                   loading="lazy"
@@ -181,7 +181,7 @@ const SeasonAccordion = ({ seasons = [], tvId }) => {
       {displaySeasons.map(season => {
         const isOpen   = openSeason === season.season_number;
         const posterUrl = season.poster_path
-          ? `https://image.tmdb.org/t/p/w185${season.poster_path}`
+          ? `/tmdb-images/w185${season.poster_path}`
           : null;
         const airYear = season.air_date
           ? new Date(season.air_date).getFullYear()

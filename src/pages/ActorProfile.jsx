@@ -63,7 +63,7 @@ const ActorProfile = () => {
           <div className="aspect-[2/3] rounded-3xl overflow-hidden border border-white/10 shadow-2xl relative bg-white/5">
             {person.profile_path ? (
               <img 
-                src={`https://image.tmdb.org/t/p/w780${person.profile_path}`} 
+                src={`/tmdb-images/w780${person.profile_path}`} 
                 alt={person.name}
                 className="w-full h-full object-cover"
               />

@@ -130,7 +130,7 @@ const ReviewModal = ({ media, mediaType, onClose }) => {
         <div className="flex items-center gap-5 p-7 border-b border-white/5">
           {media.poster_path && (
             <img
-              src={`https://image.tmdb.org/t/p/w92${media.poster_path}`}
+              src={`/tmdb-images/w92${media.poster_path}`}
               alt={title}
               className="w-14 aspect-[2/3] object-cover rounded-xl flex-shrink-0 border border-white/10"
             />

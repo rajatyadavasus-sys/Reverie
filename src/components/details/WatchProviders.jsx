@@ -47,7 +47,7 @@ const ProviderLogo = ({ provider, tmdbLink, size = 'md' }) => {
       title={`Watch on ${provider.provider_name}`}
     >
       <img
-        src={`https://image.tmdb.org/t/p/original${provider.logo_path}`}
+        src={`/tmdb-images/original${provider.logo_path}`}
         alt={provider.provider_name}
         className={`${sizeClass} rounded-xl object-cover border border-white/10 transition-all duration-200 group-hover/logo:scale-110 group-hover/logo:border-white/30 group-hover/logo:shadow-lg`}
       />

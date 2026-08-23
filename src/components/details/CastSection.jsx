@@ -17,7 +17,7 @@ const CastSection = ({ cast = [] }) => {
             <div className="w-full aspect-square rounded-2xl overflow-hidden bg-white/5 border border-white/10 group-hover:border-[var(--color-accent)]/40 transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-[0_8px_20px_-8px_rgba(0,0,0,0.6)]">
               {person.profile_path ? (
                 <img
-                  src={`https://image.tmdb.org/t/p/w185${person.profile_path}`}
+                  src={`/tmdb-images/w185${person.profile_path}`}
                   alt={person.name}
                   className="w-full h-full object-cover object-top"
                   loading="lazy"

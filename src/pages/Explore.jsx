@@ -70,15 +70,15 @@ const Explore = () => {
   const [activeTab, setActiveTab] = useState('movies');
 
   const movieSections = [
-    { title: '🎬 Now Playing',   fn: (p) => fetch(`https://api.themoviedb.org/3/movie/now_playing?page=${p}`, { headers: { accept: 'application/json', Authorization: `Bearer ${import.meta.env.VITE_TMDB_API_KEY}` } }).then(r => r.json()), media: 'movie', limited: true },
-    { title: '🔥 Popular',       fn: (p) => fetch(`https://api.themoviedb.org/3/movie/popular?page=${p}`,     { headers: { accept: 'application/json', Authorization: `Bearer ${import.meta.env.VITE_TMDB_API_KEY}` } }).then(r => r.json()), media: 'movie' },
-    { title: '🏆 Top Rated',     fn: (p) => fetch(`https://api.themoviedb.org/3/movie/top_rated?page=${p}`,   { headers: { accept: 'application/json', Authorization: `Bearer ${import.meta.env.VITE_TMDB_API_KEY}` } }).then(r => r.json()), media: 'movie' },
+    { title: '🎬 Now Playing',   fn: (p) => fetch(`/api/tmdb/movie/now_playing?page=${p}`, { headers: { accept: 'application/json', Authorization: `Bearer ${import.meta.env.VITE_TMDB_API_KEY}` } }).then(r => r.json()), media: 'movie', limited: true },
+    { title: '🔥 Popular',       fn: (p) => fetch(`/api/tmdb/movie/popular?page=${p}`,     { headers: { accept: 'application/json', Authorization: `Bearer ${import.meta.env.VITE_TMDB_API_KEY}` } }).then(r => r.json()), media: 'movie' },
+    { title: '🏆 Top Rated',     fn: (p) => fetch(`/api/tmdb/movie/top_rated?page=${p}`,   { headers: { accept: 'application/json', Authorization: `Bearer ${import.meta.env.VITE_TMDB_API_KEY}` } }).then(r => r.json()), media: 'movie' },
   ];
 
   const tvSections = [
-    { title: '📡 On Air',        fn: (p) => fetch(`https://api.themoviedb.org/3/tv/on_the_air?page=${p}`,  { headers: { accept: 'application/json', Authorization: `Bearer ${import.meta.env.VITE_TMDB_API_KEY}` } }).then(r => r.json()), media: 'tv', limited: true },
-    { title: '🔥 Popular Shows', fn: (p) => fetch(`https://api.themoviedb.org/3/tv/popular?page=${p}`,     { headers: { accept: 'application/json', Authorization: `Bearer ${import.meta.env.VITE_TMDB_API_KEY}` } }).then(r => r.json()), media: 'tv' },
-    { title: '🏆 Top Rated Shows', fn: (p) => fetch(`https://api.themoviedb.org/3/tv/top_rated?page=${p}`, { headers: { accept: 'application/json', Authorization: `Bearer ${import.meta.env.VITE_TMDB_API_KEY}` } }).then(r => r.json()), media: 'tv' },
+    { title: '📡 On Air',        fn: (p) => fetch(`/api/tmdb/tv/on_the_air?page=${p}`,  { headers: { accept: 'application/json', Authorization: `Bearer ${import.meta.env.VITE_TMDB_API_KEY}` } }).then(r => r.json()), media: 'tv', limited: true },
+    { title: '🔥 Popular Shows', fn: (p) => fetch(`/api/tmdb/tv/popular?page=${p}`,     { headers: { accept: 'application/json', Authorization: `Bearer ${import.meta.env.VITE_TMDB_API_KEY}` } }).then(r => r.json()), media: 'tv' },
+    { title: '🏆 Top Rated Shows', fn: (p) => fetch(`/api/tmdb/tv/top_rated?page=${p}`, { headers: { accept: 'application/json', Authorization: `Bearer ${import.meta.env.VITE_TMDB_API_KEY}` } }).then(r => r.json()), media: 'tv' },
   ];
 
   const sections = activeTab === 'movies' ? movieSections : tvSections;

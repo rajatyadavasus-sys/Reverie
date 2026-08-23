@@ -99,7 +99,7 @@ const SearchBar = () => {
                 {/* Image */}
                 <div className="w-12 h-16 rounded-lg overflow-hidden bg-white/5 flex-shrink-0">
                   <img
-                    src={`https://image.tmdb.org/t/p/w92${item.media_type === 'person' ? item.profile_path : item.poster_path}`}
+                    src={`/tmdb-images/w92${item.media_type === 'person' ? item.profile_path : item.poster_path}`}
                     alt={item.title || item.name}
                     className="w-full h-full object-cover"
                   />

@@ -1,10 +1,10 @@
-const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
+const TMDB_BASE_URL = '/api/tmdb';
 // Uses the v3 API key as a Bearer token — works correctly from the browser.
 // Get yours at: https://www.themoviedb.org/settings/api
 const TMDB_API_KEY = import.meta.env.VITE_TMDB_API_KEY;
 
 const fetchFromTMDB = async (endpoint, params = {}) => {
-  const url = new URL(`${TMDB_BASE_URL}${endpoint}`);
+  const url = new URL(`${TMDB_BASE_URL}${endpoint}`, window.location.origin);
   // Append extra query params (e.g. query, page, with_genres)
   Object.keys(params).forEach(key => url.searchParams.append(key, params[key]));
 

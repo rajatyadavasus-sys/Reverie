@@ -9,7 +9,7 @@ export const getAvatarUrl = (userOrReview, isPlatformUser = true, isCurrentUser 
   if (!isPlatformUser) {
     if (userOrReview?.author_details?.avatar_path) {
       let path = userOrReview.author_details.avatar_path;
-      return path.startsWith('/https') ? path.substring(1) : `https://image.tmdb.org/t/p/w150_and_h150_face${path}`;
+      return path.startsWith('/https') ? path.substring(1) : `/tmdb-images/w150_and_h150_face${path}`;
     }
     return `https://ui-avatars.com/api/?name=${encodeURIComponent(seedName)}&background=random`;
   }

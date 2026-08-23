@@ -186,7 +186,7 @@ const MediaDetails = () => {
         {media.backdrop_path ? (
           <div
             className="absolute inset-0 bg-cover bg-center"
-            style={{ backgroundImage: `url(https://image.tmdb.org/t/p/original${media.backdrop_path})` }}
+            style={{ backgroundImage: `url(/tmdb-images/original${media.backdrop_path})` }}
           />
         ) : (
           <div className="absolute inset-0 bg-gradient-to-br from-purple-900/40 to-[var(--color-background)]" />
@@ -205,7 +205,7 @@ const MediaDetails = () => {
               <img
                 src={
                   media.poster_path
-                    ? `https://image.tmdb.org/t/p/w500${media.poster_path}`
+                    ? `/tmdb-images/w500${media.poster_path}`
                     : 'https://via.placeholder.com/500x750?text=No+Poster'
                 }
                 alt={title}

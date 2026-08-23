@@ -8,11 +8,11 @@ import { Film, Tv } from 'lucide-react';
 
 const BEARER = () => import.meta.env.VITE_TMDB_API_KEY;
 const trendingMovieFetch = (page) =>
-  fetch(`https://api.themoviedb.org/3/trending/movie/day?page=${page}`, {
+  fetch(`/api/tmdb/trending/movie/day?page=${page}`, {
     headers: { accept: 'application/json', Authorization: `Bearer ${BEARER()}` },
   }).then(r => r.json());
 const trendingTVFetch = (page) =>
-  fetch(`https://api.themoviedb.org/3/trending/tv/day?page=${page}`, {
+  fetch(`/api/tmdb/trending/tv/day?page=${page}`, {
     headers: { accept: 'application/json', Authorization: `Bearer ${BEARER()}` },
   }).then(r => r.json());
 

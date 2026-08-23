@@ -109,8 +109,8 @@ const HEADERS = () => ({ accept: 'application/json', Authorization: `Bearer ${BE
 const buildFetch = (type, genres, withoutGenres, sort, customInject) => async (page = 1) => {
   const withoutParam = withoutGenres ? `&without_genres=${withoutGenres}` : '';
   const base = type === 'movie'
-    ? `https://api.themoviedb.org/3/discover/movie?with_genres=${genres}${withoutParam}&sort_by=${sort}&vote_count.gte=100&page=${page}`
-    : `https://api.themoviedb.org/3/discover/tv?with_genres=${genres}${withoutParam}&sort_by=${sort}&vote_count.gte=50&page=${page}`;
+    ? `/api/tmdb/discover/movie?with_genres=${genres}${withoutParam}&sort_by=${sort}&vote_count.gte=100&page=${page}`
+    : `/api/tmdb/discover/tv?with_genres=${genres}${withoutParam}&sort_by=${sort}&vote_count.gte=50&page=${page}`;
   
   const res = await fetch(base, { headers: HEADERS() });
   const data = await res.json();
@@ -119,7 +119,7 @@ const buildFetch = (type, genres, withoutGenres, sort, customInject) => async (p
   if (page === 1 && customInject?.length > 0) {
     const injected = await Promise.all(
       customInject.map(id => 
-        fetch(`https://api.themoviedb.org/3/${type}/${id}`, { headers: HEADERS() }).then(r => r.json())
+        fetch(`/api/tmdb/${type}/${id}`, { headers: HEADERS() }).then(r => r.json())
       )
     );
     // Filter out errors and add media_type so cards render properly

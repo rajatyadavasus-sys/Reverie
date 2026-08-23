@@ -109,7 +109,7 @@ const Profile = () => {
                   >
                     <div className="flex items-center gap-4 mb-4 border-b border-white/5 pb-4">
                       {review.poster_path && (
-                        <img src={`https://image.tmdb.org/t/p/w92${review.poster_path}`} alt={review.title} className="w-12 h-16 rounded-md object-cover transition-transform group-hover/review:scale-105" />
+                        <img src={`/tmdb-images/w92${review.poster_path}`} alt={review.title} className="w-12 h-16 rounded-md object-cover transition-transform group-hover/review:scale-105" />
                       )}
                       <div>
                         <h4 className="text-white font-bold text-lg leading-tight line-clamp-1 group-hover/review:text-[var(--color-accent)] transition-colors">{review.title}</h4>

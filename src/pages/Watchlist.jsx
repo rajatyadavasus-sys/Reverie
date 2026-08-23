@@ -46,7 +46,7 @@ const Watchlist = () => {
               >
                 <Link to={route} className="flex-shrink-0">
                   <img
-                    src={`https://image.tmdb.org/t/p/w200${item.poster_path}`}
+                    src={`/tmdb-images/w200${item.poster_path}`}
                     alt={title}
                     className="w-20 h-28 object-cover rounded-xl"
                   />
