@@ -152,9 +152,9 @@ const HeroSection = () => {
 
           <Link 
             to="/explore" 
-            className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-white font-bold text-lg transition-all hover:scale-105 hover:shadow-[0_0_40px_-10px_var(--color-accent)] mb-12"
+            className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)] font-bold text-lg transition-all hover:scale-105 hover:shadow-[0_0_40px_-10px_var(--color-accent)] mb-12"
           >
-            <Play className="w-6 h-6 fill-white" />
+            <Play className="w-6 h-6 fill-current" />
             Browse Movies
           </Link>
           

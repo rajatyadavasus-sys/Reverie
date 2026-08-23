@@ -293,10 +293,10 @@ const MediaDetails = () => {
                 className={`flex items-center gap-2.5 px-6 py-3.5 rounded-full font-semibold text-sm transition-all duration-200 hover:scale-105 ${
                   isSaved
                     ? 'bg-white/10 text-white border border-white/20'
-                    : 'bg-[var(--color-accent)] text-white shadow-lg shadow-purple-900/30 hover:bg-[var(--color-accent-hover)]'
+                    : 'bg-[var(--color-accent)] text-[var(--color-accent-text)] shadow-lg shadow-[var(--color-accent)]/30 hover:bg-[var(--color-accent-hover)]'
                 }`}
               >
-                <Heart className={`w-4 h-4 ${isSaved ? 'fill-white' : ''}`} />
+                <Heart className={`w-4 h-4 ${isSaved ? 'fill-white' : 'fill-current'}`} />
                 {isSaved ? 'In Watchlist' : 'Add to Watchlist'}
               </button>
 
