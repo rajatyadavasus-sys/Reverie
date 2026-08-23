@@ -150,39 +150,50 @@ const Navbar = () => {
               )}
             </button>
             {/* Dropdown */}
-            <div className="absolute right-0 mt-2 w-56 bg-[#171C2A] border border-white/10 rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 overflow-hidden">
+            <div className="absolute right-0 mt-2 w-80 bg-[#171C2A] border border-white/10 rounded-2xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 overflow-hidden">
               {currentUser ? (
-                <div className="p-3 border-b border-white/5 bg-white/5">
-                  <p className="text-white text-sm font-semibold truncate">{currentUser.displayName}</p>
-                  <p className="text-gray-400 text-xs truncate">{currentUser.email}</p>
+                <div className="p-4 border-b border-white/5 bg-white/5 flex items-center gap-3">
+                  <div className="flex-1 min-w-0">
+                    <p className="text-white text-sm font-bold truncate">{currentUser.displayName}</p>
+                    <p className="text-gray-400 text-xs truncate">{currentUser.email}</p>
+                  </div>
                 </div>
               ) : (
-                <div className="p-3 border-b border-white/5 bg-white/5">
-                  <p className="text-white text-sm font-semibold">Guest Explorer</p>
-                  <p className="text-gray-400 text-xs">Sign in to track movies</p>
+                <div className="p-4 border-b border-white/5 bg-white/5 flex items-center gap-3">
+                  <div className="flex-1 min-w-0">
+                    <p className="text-white text-sm font-bold truncate">Guest Explorer</p>
+                    <p className="text-gray-400 text-xs truncate">Sign in to track movies</p>
+                  </div>
                 </div>
               )}
               
-              {/* Theme Selection inside Dropdown */}
-              <div className="p-3 border-b border-white/5">
-                <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider mb-2 flex items-center gap-2">
+              {/* Theme Selection inside Dropdown (Mini Bento) */}
+              <div className="p-4 border-b border-white/5 bg-black/20">
+                <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-3 flex items-center gap-2">
                   <Palette className="w-3 h-3" /> App Theme
                 </p>
-                <div className="flex flex-col gap-1">
-                  {themes.map(t => (
-                    <button
-                      key={t.id}
-                      onClick={() => setTheme(t.id)}
-                      className={`flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold transition-all ${
-                        theme === t.id 
-                          ? 'bg-[var(--color-accent)]/20 text-[var(--color-accent)]' 
-                          : 'text-gray-400 hover:bg-white/5 hover:text-white'
-                      }`}
-                    >
-                      <span className="w-3 h-3 rounded-full shadow-sm" style={{ backgroundColor: t.color }}></span>
-                      {t.name}
-                    </button>
-                  ))}
+                <div className="grid grid-cols-2 gap-2">
+                  {themes.map(t => {
+                    const isActive = theme === t.id;
+                    return (
+                      <button
+                        key={t.id}
+                        onClick={() => setTheme(t.id)}
+                        className={`relative flex flex-col items-start p-3 rounded-xl transition-all duration-300 border text-left overflow-hidden ${
+                          isActive 
+                            ? 'border-[var(--color-accent)] bg-[var(--color-accent)]/10 shadow-[0_0_15px_rgba(0,0,0,0.2)]' 
+                            : 'border-white/5 bg-white/5 hover:bg-white/10 hover:border-white/10'
+                        }`}
+                      >
+                        {isActive && (
+                          <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-accent)]/20 to-transparent pointer-events-none"></div>
+                        )}
+                        <span className="w-3 h-3 rounded-full shadow-sm mb-2 relative z-10" style={{ backgroundColor: t.color }}></span>
+                        <span className={`text-xs font-bold relative z-10 ${isActive ? 'text-white' : 'text-gray-300'}`}>{t.name}</span>
+                        <span className="text-[9px] text-gray-500 relative z-10">{t.sub}</span>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
@@ -191,14 +202,14 @@ const Navbar = () => {
                   <>
                     <Link
                       to="/profile"
-                      className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-300 hover:bg-white/5 hover:text-white rounded-lg transition-colors mb-1"
+                      className="w-full flex items-center gap-3 px-3 py-2.5 text-sm text-gray-300 hover:bg-white/5 hover:text-white rounded-xl transition-colors mb-1 font-medium"
                     >
                       <User className="w-4 h-4" />
                       My Profile
                     </Link>
                     <button
                       onClick={logout}
-                      className="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+                      className="w-full flex items-center gap-3 px-3 py-2.5 text-sm text-red-400 hover:bg-red-500/10 rounded-xl transition-colors font-medium"
                     >
                       <LogOut className="w-4 h-4" />
                       Sign Out
@@ -207,7 +218,7 @@ const Navbar = () => {
                 ) : (
                   <button 
                     onClick={promptLogin}
-                    className="w-full flex items-center gap-2 px-3 py-2 text-sm text-[var(--color-accent)] hover:bg-[var(--color-accent)]/10 rounded-lg transition-colors font-bold"
+                    className="w-full flex items-center gap-3 px-3 py-2.5 text-sm text-[var(--color-accent)] hover:bg-[var(--color-accent)]/10 rounded-xl transition-colors font-bold"
                   >
                     <User className="w-4 h-4" />
                     Sign In with Google

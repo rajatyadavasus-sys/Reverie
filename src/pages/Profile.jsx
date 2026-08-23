@@ -116,29 +116,50 @@ const Profile = () => {
             </div>
           )}
         </div>
+      </div>
 
-        {/* Theme Switcher block */}
-        <div className="w-full md:w-auto bg-[#131824] p-5 rounded-2xl border border-white/5">
-          <div className="flex items-center gap-2 text-white font-bold mb-4">
-            <Palette className="w-4 h-4 text-[var(--color-accent)]" />
-            App Theme
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            {themes.map(t => (
+      {/* Theme Bento Block */}
+      <div className="mb-16">
+        <div className="flex items-center gap-2 mb-6">
+          <Palette className="w-6 h-6 text-[var(--color-accent)]" />
+          <h2 className="text-2xl font-bold text-white tracking-tight">App Theme</h2>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          {themes.map(t => {
+            const isActive = theme === t.id;
+            return (
               <button
                 key={t.id}
                 onClick={() => setTheme(t.id)}
-                className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold transition-all border ${
-                  theme === t.id 
-                    ? 'border-[var(--color-accent)] bg-[var(--color-accent)]/10 text-white' 
-                    : 'border-white/5 text-gray-400 hover:bg-white/5 hover:text-gray-200'
+                className={`relative flex flex-col items-start p-6 rounded-3xl transition-all duration-300 border text-left overflow-hidden group ${
+                  isActive 
+                    ? 'border-[var(--color-accent)] shadow-[0_0_30px_rgba(0,0,0,0.3)] bg-[var(--color-accent)]/10' 
+                    : 'border-white/5 bg-white/5 hover:bg-white/10 hover:border-white/20'
                 }`}
               >
-                <span className="w-3 h-3 rounded-full shadow-sm" style={{ backgroundColor: t.color }}></span>
-                {t.name}
+                {/* Background Gradient similar to Emotions page */}
+                <div 
+                  className={`absolute inset-0 opacity-20 transition-opacity duration-500 ${isActive ? 'opacity-40' : 'group-hover:opacity-30'}`}
+                  style={{ background: `radial-gradient(circle at top right, ${t.color}, transparent 70%)` }}
+                ></div>
+                
+                <span 
+                  className="w-10 h-10 rounded-full shadow-lg mb-6 relative z-10 border border-white/10 flex items-center justify-center transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6" 
+                  style={{ backgroundColor: t.color }}
+                >
+                  {isActive && <div className="w-3 h-3 bg-white rounded-full shadow-inner"></div>}
+                </span>
+                
+                <span className={`text-xl font-black relative z-10 mb-1 tracking-tight ${isActive ? 'text-white' : 'text-gray-200'}`}>
+                  {t.name}
+                </span>
+                
+                <span className="text-sm font-medium text-gray-400 relative z-10">
+                  {t.sub}
+                </span>
               </button>
-            ))}
-          </div>
+            );
+          })}
         </div>
       </div>
       

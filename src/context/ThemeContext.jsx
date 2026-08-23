@@ -17,12 +17,12 @@ export const ThemeProvider = ({ children }) => {
   }, [theme]);
 
   const themes = [
-    { id: 'default', name: 'Midnight Purple', color: '#aa3bff' },
-    { id: 'crimson', name: 'Cinematic Crimson', color: '#f43f5e' },
-    { id: 'emerald', name: 'Obsidian Emerald', color: '#10b981' },
-    { id: 'gold', name: 'Golden Hour', color: '#eab308' },
-    { id: 'ocean', name: 'Oceanic Blue', color: '#0ea5e9' },
-    { id: 'cyberpunk', name: 'Cyberpunk Pink', color: '#ec4899' },
+    { id: 'default', name: 'Midnight Purple', sub: 'Deep & mysterious', color: '#aa3bff' },
+    { id: 'crimson', name: 'Cinematic Crimson', sub: 'Dark theater vibes', color: '#f43f5e' },
+    { id: 'emerald', name: 'Obsidian Emerald', sub: 'Matrix inspired', color: '#10b981' },
+    { id: 'gold', name: 'Golden Hour', sub: 'Warm & premium', color: '#eab308' },
+    { id: 'ocean', name: 'Oceanic Blue', sub: 'Deep sea calm', color: '#0ea5e9' },
+    { id: 'cyberpunk', name: 'Cyberpunk Pink', sub: 'Neon night city', color: '#ec4899' },
   ];
 
   return (
