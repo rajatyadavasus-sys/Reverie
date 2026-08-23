@@ -4,6 +4,7 @@ import { Search, Heart, User, Sparkles, Dices, Loader2, LogOut, Palette } from '
 import SearchBar from '../common/SearchBar';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
+import { getAvatarUrl } from '../../utils/avatar';
 
 // Curated masterpiece pool — dark thrillers, intense dramas, romantic classics,
 // prestige TV, malayalam cinema, and iconic animation
@@ -84,10 +85,7 @@ const Navbar = () => {
   const { currentUser, logout, promptLogin } = useAuth();
   const { theme, setTheme, themes } = useTheme();
 
-  // Use custom photoURL if uploaded via our system, otherwise fallback to premium generated avatar
-  const seedName = currentUser?.displayName || currentUser?.email || 'User';
-  const isCustomUploaded = currentUser?.photoURL?.includes('firebasestorage');
-  const avatarUrl = isCustomUploaded ? currentUser.photoURL : `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(seedName)}&backgroundColor=transparent`;
+  const avatarUrl = getAvatarUrl(currentUser, true, true, currentUser?.photoURL);
 
   const navLinkClass = ({ isActive }) => 
     `text-lg font-medium transition-colors duration-300 ${isActive ? 'text-[var(--color-accent)]' : 'text-gray-300 hover:text-white'}`;

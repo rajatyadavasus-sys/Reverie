@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Star, MessageSquare, ShieldCheck } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { getAvatarUrl } from '../../utils/avatar';
 
 export const getRatingTag = (val) => {
   if (!val) return { label: 'Unrated Review', color: 'text-gray-400', bg: 'bg-gray-500/10', border: 'border-gray-500/20' };
@@ -26,19 +27,7 @@ const ReviewCard = ({ review, isCurrentUser = false, isReverieUser = false }) =>
   const numericRating = typeof ratingVal === 'number' ? ratingVal : null;
   const tag = getRatingTag(ratingVal);
 
-  const emailForAvatar = isCurrentUser 
-    ? (currentUser?.email || 'reverie') 
-    : (review.authorEmail || review.authorUid || review.authorName || review.author || 'reverie');
-
-  const seedName = isCurrentUser ? (currentUser?.displayName || currentUser?.email || 'User') : (review.authorName || review.author || 'User');
-  const userPhoto = isCurrentUser ? currentUser?.photoURL : review.photoURL;
-  const isCustomUploaded = userPhoto?.includes('firebasestorage');
-  
-  const avatarUrl = isPlatformUser
-    ? (isCustomUploaded ? userPhoto : `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(seedName)}&backgroundColor=transparent`)
-    : review.author_details?.avatar_path
-      ? review.author_details.avatar_path.startsWith('/https') ? review.author_details.avatar_path.substring(1) : `https://image.tmdb.org/t/p/w150_and_h150_face${review.author_details.avatar_path}`
-      : `https://ui-avatars.com/api/?name=${encodeURIComponent(review.author)}&background=random`;
+  const avatarUrl = getAvatarUrl(review, isPlatformUser, isCurrentUser, currentUser?.photoURL);
 
   const authorName = isCurrentUser 
     ? (currentUser?.displayName || 'Cinema Lover') 

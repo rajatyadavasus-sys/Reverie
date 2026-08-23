@@ -9,6 +9,7 @@ import MovieCard from '../components/common/MovieCard';
 import { Palette, List, CheckCircle, MessageSquare, Camera } from 'lucide-react';
 import { ReviewIcon } from '../utils/ratings';
 import { getRatingTag } from '../components/details/TMDBReviews';
+import { getAvatarUrl } from '../utils/avatar';
 
 const Profile = () => {
   const { currentUser, updateUsername, updateAvatar } = useAuth();
@@ -132,9 +133,7 @@ const Profile = () => {
     }
   };
 
-  const seedName = currentUser?.displayName || currentUser?.email || 'User';
-  const isCustomUploaded = currentUser?.photoURL?.includes('firebasestorage');
-  const avatarUrl = isCustomUploaded ? currentUser.photoURL : `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(seedName)}&backgroundColor=transparent`;
+  const avatarUrl = getAvatarUrl(currentUser, true, true, currentUser?.photoURL);
 
   return (
     <div className="container mx-auto px-8 lg:px-16 py-12">
