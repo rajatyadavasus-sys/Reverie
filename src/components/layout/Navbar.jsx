@@ -84,8 +84,8 @@ const Navbar = () => {
   const { currentUser, logout, promptLogin } = useAuth();
   const { theme, setTheme, themes } = useTheme();
 
-  // Use DiceBear 'micah' style avatars for a sleek, automated stylized look
-  const avatarUrl = `https://api.dicebear.com/7.x/micah/svg?seed=${currentUser?.email || 'reverie'}&backgroundColor=transparent`;
+  // Use DiceBear 'bottts-neutral' style avatars for a sleek, automated stylized look
+  const avatarUrl = `https://api.dicebear.com/7.x/bottts-neutral/svg?seed=${currentUser?.email || 'reverie'}&backgroundColor=transparent`;
 
   const navLinkClass = ({ isActive }) => 
     `text-lg font-medium transition-colors duration-300 ${isActive ? 'text-[var(--color-accent)]' : 'text-gray-300 hover:text-white'}`;
@@ -140,72 +140,82 @@ const Navbar = () => {
             <Heart className="w-6 h-6" />
           </Link>
           
-          {/* Theme Dropdown */}
-          <div className="relative group hidden sm:block">
-            <button className="flex items-center justify-center w-10 h-10 rounded-full text-gray-300 hover:text-[var(--color-accent)] hover:bg-[var(--color-accent)]/10 transition-all">
-              <Palette className="w-5 h-5" />
-            </button>
-            <div className="absolute right-0 mt-2 w-48 bg-[#171C2A] border border-white/10 rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 overflow-hidden">
-              <div className="p-3 border-b border-white/5 bg-white/5">
-                <p className="text-white text-xs font-bold uppercase tracking-wider">App Theme</p>
-              </div>
-              <div className="p-2 flex flex-col gap-1">
-                {themes.map(t => (
-                  <button
-                    key={t.id}
-                    onClick={() => setTheme(t.id)}
-                    className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-semibold transition-all ${
-                      theme === t.id 
-                        ? 'bg-[var(--color-accent)]/20 text-[var(--color-accent)]' 
-                        : 'text-gray-400 hover:bg-white/5 hover:text-white'
-                    }`}
-                  >
-                    <span className="w-3 h-3 rounded-full shadow-sm" style={{ backgroundColor: t.color }}></span>
-                    {t.name}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-          
-          {currentUser ? (
-            <div className="relative group">
-              <button className="flex items-center justify-center w-10 h-10 rounded-full bg-white/10 text-white overflow-hidden border border-[var(--color-accent)]/30 transition-all hover:scale-105 hover:shadow-[0_0_15px_var(--color-accent)]">
+          {/* Unified User & Theme Dropdown */}
+          <div className="relative group">
+            <button className="flex items-center justify-center w-10 h-10 rounded-full bg-white/10 text-white overflow-hidden border border-[var(--color-accent)]/30 transition-all hover:scale-105 hover:shadow-[0_0_15px_var(--color-accent)]">
+              {currentUser ? (
                 <img src={avatarUrl} alt={currentUser.displayName} className="w-full h-full object-cover p-1" />
-              </button>
-              {/* Dropdown */}
-              <div className="absolute right-0 mt-2 w-48 bg-[#171C2A] border border-white/10 rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
-                <div className="p-3 border-b border-white/5">
+              ) : (
+                <User className="w-5 h-5 text-[var(--color-accent)]" />
+              )}
+            </button>
+            {/* Dropdown */}
+            <div className="absolute right-0 mt-2 w-56 bg-[#171C2A] border border-white/10 rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 overflow-hidden">
+              {currentUser ? (
+                <div className="p-3 border-b border-white/5 bg-white/5">
                   <p className="text-white text-sm font-semibold truncate">{currentUser.displayName}</p>
                   <p className="text-gray-400 text-xs truncate">{currentUser.email}</p>
                 </div>
-                <div className="p-2">
-                  <Link
-                    to="/profile"
-                    className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-300 hover:bg-white/5 hover:text-white rounded-lg transition-colors mb-1"
-                  >
-                    <User className="w-4 h-4" />
-                    Profile & Themes
-                  </Link>
-                  <button
-                    onClick={logout}
-                    className="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
-                  >
-                    <LogOut className="w-4 h-4" />
-                    Sign Out
-                  </button>
+              ) : (
+                <div className="p-3 border-b border-white/5 bg-white/5">
+                  <p className="text-white text-sm font-semibold">Guest Explorer</p>
+                  <p className="text-gray-400 text-xs">Sign in to track movies</p>
+                </div>
+              )}
+              
+              {/* Theme Selection inside Dropdown */}
+              <div className="p-3 border-b border-white/5">
+                <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider mb-2 flex items-center gap-2">
+                  <Palette className="w-3 h-3" /> App Theme
+                </p>
+                <div className="flex flex-col gap-1">
+                  {themes.map(t => (
+                    <button
+                      key={t.id}
+                      onClick={() => setTheme(t.id)}
+                      className={`flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold transition-all ${
+                        theme === t.id 
+                          ? 'bg-[var(--color-accent)]/20 text-[var(--color-accent)]' 
+                          : 'text-gray-400 hover:bg-white/5 hover:text-white'
+                      }`}
+                    >
+                      <span className="w-3 h-3 rounded-full shadow-sm" style={{ backgroundColor: t.color }}></span>
+                      {t.name}
+                    </button>
+                  ))}
                 </div>
               </div>
+
+              <div className="p-2">
+                {currentUser ? (
+                  <>
+                    <Link
+                      to="/profile"
+                      className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-300 hover:bg-white/5 hover:text-white rounded-lg transition-colors mb-1"
+                    >
+                      <User className="w-4 h-4" />
+                      My Profile
+                    </Link>
+                    <button
+                      onClick={logout}
+                      className="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+                    >
+                      <LogOut className="w-4 h-4" />
+                      Sign Out
+                    </button>
+                  </>
+                ) : (
+                  <button 
+                    onClick={promptLogin}
+                    className="w-full flex items-center gap-2 px-3 py-2 text-sm text-[var(--color-accent)] hover:bg-[var(--color-accent)]/10 rounded-lg transition-colors font-bold"
+                  >
+                    <User className="w-4 h-4" />
+                    Sign In with Google
+                  </button>
+                )}
+              </div>
             </div>
-          ) : (
-            <button 
-              onClick={promptLogin}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors border border-white/20 font-semibold text-sm whitespace-nowrap"
-            >
-              <User className="w-4 h-4" />
-              Sign In
-            </button>
-          )}
+          </div>
         </div>
       </div>
     </nav>

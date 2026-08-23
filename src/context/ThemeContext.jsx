@@ -21,6 +21,8 @@ export const ThemeProvider = ({ children }) => {
     { id: 'crimson', name: 'Cinematic Crimson', color: '#f43f5e' },
     { id: 'emerald', name: 'Obsidian Emerald', color: '#10b981' },
     { id: 'gold', name: 'Golden Hour', color: '#eab308' },
+    { id: 'ocean', name: 'Oceanic Blue', color: '#0ea5e9' },
+    { id: 'cyberpunk', name: 'Cyberpunk Pink', color: '#ec4899' },
   ];
 
   return (

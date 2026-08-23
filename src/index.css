@@ -28,6 +28,20 @@
   --color-accent-hover: #fde047;
 }
 
+[data-theme="ocean"] {
+  --color-background: #08101a;
+  --color-card: #111d2d;
+  --color-accent: #0ea5e9;
+  --color-accent-hover: #38bdf8;
+}
+
+[data-theme="cyberpunk"] {
+  --color-background: #09090b;
+  --color-card: #18181b;
+  --color-accent: #ec4899;
+  --color-accent-hover: #f472b6;
+}
+
 @theme {
   --color-background: var(--color-background);
   --color-card: var(--color-card);

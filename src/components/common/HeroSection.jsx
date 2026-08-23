@@ -134,9 +134,9 @@ const HeroSection = () => {
         
         {/* Left Side: Text Content & Mood Discovery */}
         <div className="text-center lg:text-left flex flex-col items-center lg:items-start pt-20 lg:pt-0">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 backdrop-blur-md border border-white/10 mb-8">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 backdrop-blur-md border border-white/10 mb-8 shadow-[0_0_15px_rgba(255,255,255,0.05)]">
             <Sparkles className="w-5 h-5 text-[var(--color-accent)]" />
-            <span className="text-sm font-medium tracking-wide">Discover Movies Through Emotion</span>
+            <span className="text-sm font-semibold tracking-wide text-gray-200">Discover Movies Through Emotion</span>
           </div>
           
           <h1 className="text-5xl md:text-7xl lg:text-[5.5rem] font-black text-white leading-[1.1] mb-6 tracking-tight drop-shadow-2xl">
