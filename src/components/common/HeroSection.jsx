@@ -133,7 +133,7 @@ const HeroSection = () => {
       <div className="relative z-10 container mx-auto px-8 lg:px-16 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
         
         {/* Left Side: Text Content & Mood Discovery */}
-        <div className="text-center lg:text-left flex flex-col items-center lg:items-start pt-24 lg:pt-0 w-full overflow-hidden">
+        <div className="text-center lg:text-left flex flex-col items-center lg:items-start pt-24 lg:pt-0 lg:translate-y-12 w-full overflow-hidden">
           
           {/* Mobile Horizontal Animated Carousel (Only visible on small screens) */}
           <div className="lg:hidden w-screen -mx-8 mb-10 overflow-hidden relative group/marquee">
