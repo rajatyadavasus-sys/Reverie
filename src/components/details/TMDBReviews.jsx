@@ -28,10 +28,10 @@ const ReviewCard = ({ review, isCurrentUser = false, isReverieUser = false }) =>
 
   const emailForAvatar = isCurrentUser 
     ? (currentUser?.email || 'reverie') 
-    : (review.authorEmail || review.author || 'reverie');
+    : (review.authorEmail || review.authorUid || review.authorName || review.author || 'reverie');
 
   const avatarUrl = isPlatformUser
-    ? `https://api.dicebear.com/7.x/lorelei/svg?seed=${emailForAvatar}&backgroundColor=transparent`
+    ? `https://api.dicebear.com/7.x/lorelei/svg?seed=${encodeURIComponent(emailForAvatar)}&backgroundColor=transparent`
     : review.author_details?.avatar_path
       ? review.author_details.avatar_path.startsWith('/https') ? review.author_details.avatar_path.substring(1) : `https://image.tmdb.org/t/p/w150_and_h150_face${review.author_details.avatar_path}`
       : `https://ui-avatars.com/api/?name=${encodeURIComponent(review.author)}&background=random`;
