@@ -4,7 +4,7 @@ const ThemeContext = createContext();
 
 export const ThemeProvider = ({ children }) => {
   const [theme, setTheme] = useState(() => {
-    return localStorage.getItem('reverie-theme') || 'default';
+    return localStorage.getItem('reverie-theme') || 'ocean';
   });
 
   useEffect(() => {

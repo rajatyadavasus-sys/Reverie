@@ -10,13 +10,39 @@ import { ReviewIcon } from '../utils/ratings';
 import { getRatingTag } from '../components/details/TMDBReviews';
 
 const Profile = () => {
-  const { currentUser } = useAuth();
+  const { currentUser, updateUsername } = useAuth();
   const { watchlist } = useWatchlist();
   const { watched } = useWatched();
   const { reviews } = useReviews();
   const { theme, setTheme, themes } = useTheme();
 
   const [activeTab, setActiveTab] = useState('watchlist');
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [editName, setEditName] = useState(currentUser?.displayName || '');
+  const [isSaving, setIsSaving] = useState(false);
+
+  // Sync editName if currentUser loads later
+  React.useEffect(() => {
+    if (currentUser) {
+      setEditName(currentUser.displayName || '');
+    }
+  }, [currentUser]);
+
+  const handleSaveName = async () => {
+    if (!editName.trim() || editName === currentUser.displayName) {
+      setIsEditingName(false);
+      return;
+    }
+    setIsSaving(true);
+    try {
+      await updateUsername(editName.trim());
+      setIsEditingName(false);
+    } catch (error) {
+      console.error("Failed to update name");
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   // Early return removed so non-logged in users can see the theme switcher on this page.
   // We will conditionally render the profile sections below.
@@ -95,9 +121,51 @@ const Profile = () => {
           />
         </div>
         <div className="flex-1 text-center md:text-left">
-          <h1 className="text-4xl font-bold text-white mb-2">
-            {currentUser ? (currentUser.displayName || 'Cinema Lover') : 'Guest Explorer'}
-          </h1>
+          {currentUser ? (
+            <div className="mb-2 flex flex-col md:flex-row items-center gap-3 justify-center md:justify-start">
+              {isEditingName ? (
+                <div className="flex items-center gap-2">
+                  <input
+                    type="text"
+                    value={editName}
+                    onChange={(e) => setEditName(e.target.value)}
+                    className="bg-black/20 border border-white/10 rounded-lg px-3 py-1 text-2xl font-bold text-white focus:outline-none focus:border-[var(--color-accent)]"
+                    autoFocus
+                    onKeyDown={(e) => e.key === 'Enter' && handleSaveName()}
+                  />
+                  <button 
+                    onClick={handleSaveName}
+                    disabled={isSaving}
+                    className="text-sm bg-[var(--color-accent)] text-white px-3 py-1 rounded-lg font-bold hover:brightness-110 disabled:opacity-50"
+                  >
+                    {isSaving ? 'Saving...' : 'Save'}
+                  </button>
+                  <button 
+                    onClick={() => { setIsEditingName(false); setEditName(currentUser.displayName || ''); }}
+                    className="text-sm bg-white/10 text-white px-3 py-1 rounded-lg font-bold hover:bg-white/20"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              ) : (
+                <div className="flex items-center gap-3 group/name">
+                  <h1 className="text-4xl font-bold text-white">
+                    {currentUser.displayName || 'Cinema Lover'}
+                  </h1>
+                  <button 
+                    onClick={() => setIsEditingName(true)}
+                    className="opacity-0 group-hover/name:opacity-100 transition-opacity text-gray-400 hover:text-[var(--color-accent)] p-1 bg-white/5 rounded-md"
+                    title="Edit Username"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <h1 className="text-4xl font-bold text-white mb-2">Guest Explorer</h1>
+          )}
+          
           <p className="text-gray-400 mb-6">
             {currentUser ? currentUser.email : 'Sign in to track your cinematic journey'}
           </p>

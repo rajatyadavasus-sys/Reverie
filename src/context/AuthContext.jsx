@@ -27,6 +27,22 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const updateUsername = async (newName) => {
+    if (!auth.currentUser) return;
+    try {
+      // Import updateProfile dynamically or make sure it's at the top
+      const { updateProfile } = await import('firebase/auth');
+      await updateProfile(auth.currentUser, {
+        displayName: newName
+      });
+      // Update local state to reflect immediately
+      setCurrentUser({ ...auth.currentUser, displayName: newName });
+    } catch (error) {
+      console.error("Failed to update username:", error);
+      throw error;
+    }
+  };
+
   // Call this anywhere in the app to open the beautiful auth modal
   const promptLogin = useCallback(() => {
     setShowModal(true);
@@ -41,7 +57,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ currentUser, loginWithGoogle, promptLogin, logout }}>
+    <AuthContext.Provider value={{ currentUser, loginWithGoogle, promptLogin, logout, updateUsername }}>
       {!loading && children}
       {showModal && <AuthModal onClose={() => setShowModal(false)} />}
     </AuthContext.Provider>
