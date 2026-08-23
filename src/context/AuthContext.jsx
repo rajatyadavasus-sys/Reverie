@@ -74,8 +74,46 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const updateAvatar = async (file) => {
+    if (!auth.currentUser) return;
+    try {
+      const { updateProfile } = await import('firebase/auth');
+      const { collection, query, where, getDocs, writeBatch } = await import('firebase/firestore');
+      const { ref, uploadBytes, getDownloadURL } = await import('firebase/storage');
+      const { db, storage } = await import('../config/firebase');
+
+      // 1. Upload to Storage
+      const fileRef = ref(storage, `users/${auth.currentUser.uid}/avatar`);
+      await uploadBytes(fileRef, file);
+      const photoURL = await getDownloadURL(fileRef);
+
+      // 2. Update Auth Profile
+      await updateProfile(auth.currentUser, {
+        photoURL
+      });
+      
+      // 3. Update all global_reviews authored by this user
+      const batch = writeBatch(db);
+      const q = query(collection(db, 'global_reviews'), where('authorUid', '==', auth.currentUser.uid));
+      const querySnapshot = await getDocs(q);
+      
+      querySnapshot.forEach((document) => {
+        batch.update(document.ref, { photoURL });
+      });
+
+      await batch.commit();
+
+      // 4. Update local state
+      setCurrentUser({ ...auth.currentUser, photoURL });
+      return photoURL;
+    } catch (error) {
+      console.error("Failed to update avatar:", error);
+      throw error;
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ currentUser, loginWithGoogle, promptLogin, logout, updateUsername }}>
+    <AuthContext.Provider value={{ currentUser, loginWithGoogle, promptLogin, logout, updateUsername, updateAvatar }}>
       {!loading && children}
       {showModal && <AuthModal onClose={() => setShowModal(false)} />}
     </AuthContext.Provider>

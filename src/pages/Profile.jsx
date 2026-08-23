@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useWatchlist } from '../context/WatchlistContext';
@@ -6,12 +6,12 @@ import { useWatched } from '../context/WatchedContext';
 import { useReviews } from '../context/ReviewContext';
 import { useTheme } from '../context/ThemeContext';
 import MovieCard from '../components/common/MovieCard';
-import { Palette, List, CheckCircle, MessageSquare } from 'lucide-react';
+import { Palette, List, CheckCircle, MessageSquare, Camera } from 'lucide-react';
 import { ReviewIcon } from '../utils/ratings';
 import { getRatingTag } from '../components/details/TMDBReviews';
 
 const Profile = () => {
-  const { currentUser, updateUsername } = useAuth();
+  const { currentUser, updateUsername, updateAvatar } = useAuth();
   const { watchlist } = useWatchlist();
   const { watched } = useWatched();
   const { reviews } = useReviews();
@@ -21,6 +21,8 @@ const Profile = () => {
   const [isEditingName, setIsEditingName] = useState(false);
   const [editName, setEditName] = useState(currentUser?.displayName || '');
   const [isSaving, setIsSaving] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef(null);
 
   // Sync editName if currentUser loads later
   React.useEffect(() => {
@@ -30,18 +32,40 @@ const Profile = () => {
   }, [currentUser]);
 
   const handleSaveName = async () => {
-    if (!editName.trim() || editName === currentUser.displayName) {
+    if (!editName.trim() || editName.trim() === currentUser.displayName) {
       setIsEditingName(false);
       return;
     }
     setIsSaving(true);
     try {
-      await updateUsername(editName.trim());
+      await updateUsername(editName);
       setIsEditingName(false);
-    } catch (error) {
-      console.error("Failed to update name");
+    } catch (err) {
+      console.error(err);
+      alert('Failed to update name');
     } finally {
-      setIsSaving(false);
+      setIsSaving(true);
+      setTimeout(() => setIsSaving(false), 500); // Give UI time to catch up
+    }
+  };
+
+  const handleFileChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (file.size > 2 * 1024 * 1024) {
+      alert("Image must be smaller than 2MB.");
+      return;
+    }
+
+    setIsUploading(true);
+    try {
+      await updateAvatar(file);
+    } catch (err) {
+      console.error(err);
+      alert('Failed to update avatar.');
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -108,7 +132,7 @@ const Profile = () => {
     }
   };
 
-  const avatarUrl = `https://api.dicebear.com/7.x/adventurer/svg?seed=${currentUser?.email || 'reverie'}&backgroundColor=transparent`;
+  const avatarUrl = currentUser?.photoURL || `https://api.dicebear.com/7.x/adventurer/svg?seed=${currentUser?.email || 'reverie'}&backgroundColor=transparent`;
 
   return (
     <div className="container mx-auto px-8 lg:px-16 py-12">
@@ -117,13 +141,33 @@ const Profile = () => {
         {/* Glow effect behind avatar */}
         <div className="absolute top-0 left-0 w-64 h-64 bg-[var(--color-accent)]/10 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2 pointer-events-none"></div>
         
-        <div className="relative group cursor-pointer">
-          <div className="absolute inset-0 bg-[var(--color-accent)] rounded-full blur opacity-20 group-hover:opacity-40 transition-opacity duration-500"></div>
-          <img 
-            src={avatarUrl} 
-            alt="Profile" 
-            className="relative w-32 h-32 rounded-full border-4 border-[var(--color-accent)]/30 object-cover shadow-2xl bg-white/5 p-2 transition-transform duration-500 group-hover:scale-105 group-hover:rotate-3"
+        <div 
+          className="relative group cursor-pointer"
+          onClick={() => fileInputRef.current?.click()}
+        >
+          <input 
+            type="file" 
+            accept="image/*" 
+            ref={fileInputRef} 
+            onChange={handleFileChange} 
+            className="hidden" 
           />
+          <div className="absolute inset-0 bg-[var(--color-accent)] rounded-full blur opacity-20 group-hover:opacity-40 transition-opacity duration-500"></div>
+          
+          <div className="relative w-32 h-32 rounded-full border-4 border-[var(--color-accent)]/30 overflow-hidden shadow-2xl bg-white/5 p-1 transition-transform duration-500 group-hover:scale-105 group-hover:rotate-3">
+            <img 
+              src={avatarUrl} 
+              alt="Profile" 
+              className={`w-full h-full rounded-full object-cover transition-opacity duration-300 ${isUploading ? 'opacity-30' : 'group-hover:opacity-50'}`}
+            />
+            {/* Upload Overlay */}
+            <div className={`absolute inset-0 flex flex-col items-center justify-center transition-opacity duration-300 ${isUploading ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
+              <Camera className="w-8 h-8 text-white drop-shadow-md mb-1" />
+              <span className="text-[10px] font-bold text-white uppercase tracking-wider drop-shadow-md">
+                {isUploading ? 'Uploading...' : 'Change'}
+              </span>
+            </div>
+          </div>
         </div>
         <div className="flex-1 text-center md:text-left">
           {currentUser ? (
