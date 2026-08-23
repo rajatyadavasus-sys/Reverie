@@ -89,9 +89,19 @@ body {
   animation: marquee-y-reverse 40s linear infinite;
 }
 
+@keyframes marquee-x {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.animate-marquee-x {
+  animation: marquee-x 40s linear infinite;
+}
+
 /* Pause on hover for marquees */
 .group-hover\/marquee:hover .animate-marquee-y,
-.group-hover\/marquee:hover .animate-marquee-y-reverse {
+.group-hover\/marquee:hover .animate-marquee-y-reverse,
+.group-hover\/marquee:hover .animate-marquee-x {
   animation-play-state: paused;
 }
 

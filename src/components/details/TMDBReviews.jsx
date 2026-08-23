@@ -35,7 +35,7 @@ const ReviewCard = ({ review, isCurrentUser = false, isReverieUser = false }) =>
   const isCustomUploaded = userPhoto?.includes('firebasestorage');
   
   const avatarUrl = isPlatformUser
-    ? (isCustomUploaded ? userPhoto : `https://ui-avatars.com/api/?name=${encodeURIComponent(seedName)}&background=aa3bff&color=fff&rounded=true&bold=true`)
+    ? (isCustomUploaded ? userPhoto : `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(seedName)}&backgroundColor=transparent`)
     : review.author_details?.avatar_path
       ? review.author_details.avatar_path.startsWith('/https') ? review.author_details.avatar_path.substring(1) : `https://image.tmdb.org/t/p/w150_and_h150_face${review.author_details.avatar_path}`
       : `https://ui-avatars.com/api/?name=${encodeURIComponent(review.author)}&background=random`;

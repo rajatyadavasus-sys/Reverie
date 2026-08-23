@@ -133,7 +133,31 @@ const HeroSection = () => {
       <div className="relative z-10 container mx-auto px-8 lg:px-16 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
         
         {/* Left Side: Text Content & Mood Discovery */}
-        <div className="text-center lg:text-left flex flex-col items-center lg:items-start pt-20 lg:pt-0">
+        <div className="text-center lg:text-left flex flex-col items-center lg:items-start pt-24 lg:pt-0 w-full overflow-hidden">
+          
+          {/* Mobile Horizontal Animated Carousel (Only visible on small screens) */}
+          <div className="lg:hidden w-screen -mx-8 mb-10 overflow-hidden relative group/marquee">
+            <div className="absolute top-0 left-0 w-16 h-full bg-gradient-to-r from-[var(--color-background)] to-transparent z-10 pointer-events-none" />
+            <div className="absolute top-0 right-0 w-16 h-full bg-gradient-to-l from-[var(--color-background)] to-transparent z-10 pointer-events-none" />
+            
+            <div className="flex gap-4 w-[200%] animate-marquee-x">
+              {[...postersCol1, ...postersCol2, ...postersCol1, ...postersCol2].map((m, i) => (
+                <Link 
+                  key={`mobile-${m.id}-${i}`}
+                  to={`/movie/${m.id}`}
+                  className="flex-shrink-0 w-36 sm:w-44 aspect-[2/3] rounded-2xl overflow-hidden shadow-2xl border border-white/10 transition-transform active:scale-95"
+                >
+                  <img 
+                    src={`https://image.tmdb.org/t/p/w500${m.poster_path}`}
+                    alt={m.title}
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                  />
+                </Link>
+              ))}
+            </div>
+          </div>
+
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 backdrop-blur-md border border-white/10 mb-8 shadow-[0_0_15px_rgba(255,255,255,0.05)]">
             <Sparkles className="w-5 h-5 text-[var(--color-accent)]" />
             <span className="text-sm font-semibold tracking-wide text-gray-200">Discover Movies Through Emotion</span>
@@ -221,27 +245,7 @@ const HeroSection = () => {
         </div>
       </div>
 
-      {/* Mobile Horizontal Carousel */}
-      <div className="lg:hidden w-full mt-12 pb-12 overflow-hidden">
-        <h3 className="text-sm font-bold tracking-[0.2em] uppercase text-gray-400 mb-6 px-8">Trending Masterpieces</h3>
-        <div className="flex gap-4 overflow-x-auto no-scrollbar snap-x snap-mandatory px-8 pb-4">
-          {[...postersCol1, ...postersCol2].map((m, i) => (
-            <Link 
-              key={`mobile-${m.id}-${i}`}
-              to={`/movie/${m.id}`}
-              className="relative snap-center flex-shrink-0 w-40 sm:w-48 aspect-[2/3] rounded-2xl overflow-hidden shadow-2xl border border-white/10 transition-transform active:scale-95"
-            >
-              <img 
-                src={`https://image.tmdb.org/t/p/w500${m.poster_path}`}
-                alt={m.title}
-                className="w-full h-full object-cover"
-                loading="lazy"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 transition-opacity"></div>
-            </Link>
-          ))}
-        </div>
-      </div>
+
       
       {/* Fade out edges of the hero section so the marquees don't get cut off harshly */}
       <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-[var(--color-background)] to-transparent z-20 pointer-events-none" />
