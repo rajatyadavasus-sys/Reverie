@@ -108,7 +108,7 @@ const Profile = () => {
     }
   };
 
-  const avatarUrl = `https://api.dicebear.com/7.x/lorelei-neutral/svg?seed=${currentUser?.email || 'reverie'}&backgroundColor=transparent`;
+  const avatarUrl = `https://api.dicebear.com/7.x/adventurer/svg?seed=${currentUser?.email || 'reverie'}&backgroundColor=transparent`;
 
   return (
     <div className="container mx-auto px-8 lg:px-16 py-12">
