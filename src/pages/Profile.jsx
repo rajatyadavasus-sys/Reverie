@@ -132,7 +132,8 @@ const Profile = () => {
     }
   };
 
-  const avatarUrl = currentUser?.photoURL || `https://api.dicebear.com/7.x/adventurer/svg?seed=${currentUser?.email || 'reverie'}&backgroundColor=transparent`;
+  const seedName = currentUser?.displayName || currentUser?.email || 'User';
+  const avatarUrl = currentUser?.photoURL || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(seedName)}&backgroundColor=aa3bff,0ea5e9&textColor=ffffff`;
 
   return (
     <div className="container mx-auto px-8 lg:px-16 py-12">

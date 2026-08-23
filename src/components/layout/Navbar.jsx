@@ -84,8 +84,9 @@ const Navbar = () => {
   const { currentUser, logout, promptLogin } = useAuth();
   const { theme, setTheme, themes } = useTheme();
 
-  // Use custom photoURL if set, otherwise fallback to 'adventurer'
-  const avatarUrl = currentUser?.photoURL || `https://api.dicebear.com/7.x/adventurer/svg?seed=${currentUser?.email || 'reverie'}&backgroundColor=transparent`;
+  // Use custom photoURL if set, otherwise fallback to premium initials
+  const seedName = currentUser?.displayName || currentUser?.email || 'User';
+  const avatarUrl = currentUser?.photoURL || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(seedName)}&backgroundColor=aa3bff,0ea5e9&textColor=ffffff`;
 
   const navLinkClass = ({ isActive }) => 
     `text-lg font-medium transition-colors duration-300 ${isActive ? 'text-[var(--color-accent)]' : 'text-gray-300 hover:text-white'}`;
