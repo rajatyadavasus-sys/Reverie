@@ -82,6 +82,7 @@ let surpriseQueue = shuffleArray(SURPRISE_POOL);
 const Navbar = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const { currentUser, logout, promptLogin } = useAuth();
   const { theme, setTheme, themes } = useTheme();
 
@@ -118,14 +119,15 @@ const Navbar = () => {
           <NavLink to="/emotions" className={navLinkClass}>Emotions</NavLink>
         </div>
 
-        <div className="flex items-center gap-3 md:gap-6">
+        <div className="flex items-center gap-2 md:gap-6">
           <button 
             onClick={handleSurprise}
             disabled={loading}
-            className="hidden sm:flex items-center gap-2 px-4 py-2.5 rounded-full bg-gradient-to-r from-purple-500/20 to-pink-500/20 hover:from-purple-500/30 hover:to-pink-500/30 border border-purple-500/30 text-white font-semibold transition-all hover:scale-105 disabled:opacity-50 whitespace-nowrap"
+            className="flex items-center justify-center sm:gap-2 w-10 h-10 sm:w-auto sm:h-auto sm:px-4 sm:py-2.5 rounded-full bg-gradient-to-r from-purple-500/20 to-pink-500/20 hover:from-purple-500/30 hover:to-pink-500/30 border border-purple-500/30 text-white font-semibold transition-all hover:scale-105 disabled:opacity-50 whitespace-nowrap"
+            title="Surprise Me"
           >
             {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Dices className="w-5 h-5 text-pink-400" />}
-            Surprise Me
+            <span className="hidden sm:inline">Surprise Me</span>
           </button>
           
           <div className="w-px h-8 bg-white/10 hidden sm:block"></div>
@@ -141,8 +143,15 @@ const Navbar = () => {
           </Link>
           
           {/* Unified User & Theme Dropdown */}
-          <div className="relative group">
-            <button className="flex items-center justify-center w-10 h-10 rounded-full bg-white/10 text-white overflow-hidden border border-[var(--color-accent)]/30 transition-all hover:scale-105 hover:shadow-[0_0_15px_var(--color-accent)]">
+          <div 
+            className="relative"
+            onMouseEnter={() => setIsDropdownOpen(true)}
+            onMouseLeave={() => setIsDropdownOpen(false)}
+          >
+            <button 
+              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+              className="flex items-center justify-center w-10 h-10 rounded-full bg-white/10 text-white overflow-hidden border border-[var(--color-accent)]/30 transition-all hover:scale-105 hover:shadow-[0_0_15px_var(--color-accent)]"
+            >
               {currentUser ? (
                 <img src={avatarUrl} alt={currentUser.displayName} className="w-full h-full object-cover p-1" />
               ) : (
@@ -150,7 +159,7 @@ const Navbar = () => {
               )}
             </button>
             {/* Dropdown */}
-            <div className="absolute right-0 mt-2 w-80 bg-[#171C2A] border border-white/10 rounded-2xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 overflow-hidden">
+            <div className={`absolute right-0 mt-2 w-80 bg-[#171C2A] border border-white/10 rounded-2xl shadow-2xl transition-all duration-200 z-50 overflow-hidden ${isDropdownOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-2'}`}>
               {currentUser ? (
                 <div className="p-4 border-b border-white/5 bg-white/5 flex items-center gap-3">
                   <div className="flex-1 min-w-0">
