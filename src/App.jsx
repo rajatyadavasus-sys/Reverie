@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Analytics } from '@vercel/analytics/react';
 import { WatchlistProvider } from './context/WatchlistContext';
 import { WatchedProvider }   from './context/WatchedContext';
 import { ReviewProvider }    from './context/ReviewContext';
@@ -48,6 +49,7 @@ function App() {
                 </Route>
               </Routes>
             </Router>
+            <Analytics />
           </ReviewProvider>
         </WatchedProvider>
       </WatchlistProvider>
