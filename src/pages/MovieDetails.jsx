@@ -55,6 +55,9 @@ const MediaDetails = () => {
   const [cast, setCast] = useState([]);
   const [trailerKey, setTrailerKey] = useState(null);
   const [tmdbReviews, setTmdbReviews] = useState([]);
+  const [reviewsPage, setReviewsPage] = useState(1);
+  const [totalReviewPages, setTotalReviewPages] = useState(1);
+  const [loadingMoreReviews, setLoadingMoreReviews] = useState(false);
   const [loading, setLoading] = useState(true);
   const [showTrailer, setShowTrailer] = useState(false);
 
@@ -106,6 +109,8 @@ const MediaDetails = () => {
           setSimilar(recs.results?.length > 0 ? recs.results : (sim.results || []));
           setCast(credits.cast || []);
           setTmdbReviews(reviewsData.results || []);
+          setTotalReviewPages(reviewsData.total_pages || 1);
+          setReviewsPage(1);
           const trailer = pickTrailer(videos.results);
           if (trailer) setTrailerKey(trailer.key);
         } else {
@@ -121,6 +126,8 @@ const MediaDetails = () => {
           setSimilar(recs.results?.length > 0 ? recs.results : (sim.results || []));
           setCast(credits.cast || []);
           setTmdbReviews(reviewsData.results || []);
+          setTotalReviewPages(reviewsData.total_pages || 1);
+          setReviewsPage(1);
           const trailer = pickTrailer(videos.results);
           if (trailer) setTrailerKey(trailer.key);
         }
@@ -154,6 +161,21 @@ const MediaDetails = () => {
   const toggleWatchlist = () => {
     if (isSaved) removeFromWatchlist(media.id, mediaType);
     else addToWatchlist({ ...media, media_type: mediaType });
+  };
+
+  const loadMoreReviews = async () => {
+    if (loadingMoreReviews || reviewsPage >= totalReviewPages) return;
+    setLoadingMoreReviews(true);
+    try {
+      const nextPage = reviewsPage + 1;
+      const data = isTV ? await getTVReviews(id, nextPage) : await getMovieReviews(id, nextPage);
+      setTmdbReviews(prev => [...prev, ...(data.results || [])]);
+      setReviewsPage(nextPage);
+    } catch (err) {
+      console.error("Error loading more reviews", err);
+    } finally {
+      setLoadingMoreReviews(false);
+    }
   };
 
   const toggleWatched = () => {
@@ -442,7 +464,14 @@ const MediaDetails = () => {
       )}
 
       {/* TMDB Reviews — user review shown first */}
-      <TMDBReviews reviews={tmdbReviews} globalReviews={globalReviews} userReview={enrichedUserReview} />
+      <TMDBReviews 
+        reviews={tmdbReviews} 
+        globalReviews={globalReviews} 
+        userReview={enrichedUserReview} 
+        hasMore={reviewsPage < totalReviewPages}
+        onLoadMore={loadMoreReviews}
+        loadingMore={loadingMoreReviews}
+      />
 
       {/* Similar titles */}
       {similar.length > 0 && (

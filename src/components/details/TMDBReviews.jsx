@@ -73,8 +73,9 @@ const ReviewCard = ({ review, isCurrentUser = false, isReverieUser = false }) =>
   );
 };
 
-const TMDBReviews = ({ reviews, globalReviews = [], userReview }) => {
+const TMDBReviews = ({ reviews, globalReviews = [], userReview, hasMore, onLoadMore, loadingMore }) => {
   const { currentUser } = useAuth();
+
   // Reverie reviews use 'tag' and 'opinion', not 'text'
   const hasUserReview = userReview && (userReview.tag || userReview.opinion);
   const hasGlobalReviews = globalReviews && globalReviews.length > 0;
@@ -109,6 +110,18 @@ const TMDBReviews = ({ reviews, globalReviews = [], userReview }) => {
           <ReviewCard key={review.id} review={review} />
         ))}
       </div>
+
+      {hasMore && (
+        <div className="mt-10 flex justify-center">
+          <button
+            onClick={onLoadMore}
+            disabled={loadingMore}
+            className="px-8 py-3 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-white font-semibold transition-all hover:scale-105 disabled:opacity-50"
+          >
+            {loadingMore ? 'Loading...' : 'Show All Reviews'}
+          </button>
+        </div>
+      )}
     </div>
   );
 };
