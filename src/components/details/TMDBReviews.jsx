@@ -111,17 +111,19 @@ const TMDBReviews = ({ reviews, globalReviews = [], userReview, hasMore, onLoadM
         ))}
       </div>
 
-      {hasMore && (
-        <div className="mt-10 flex justify-center">
-          <button
-            onClick={onLoadMore}
-            disabled={loadingMore}
-            className="px-8 py-3 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-white font-semibold transition-all hover:scale-105 disabled:opacity-50"
-          >
-            {loadingMore ? 'Loading...' : 'Show All Reviews'}
-          </button>
-        </div>
-      )}
+      <div className="mt-10 flex justify-center">
+        <button
+          onClick={hasMore ? onLoadMore : undefined}
+          disabled={loadingMore || !hasMore}
+          className={`px-8 py-3 rounded-full font-semibold transition-all ${
+            hasMore 
+              ? 'bg-white/5 hover:bg-white/10 border border-white/10 text-white hover:scale-105' 
+              : 'bg-transparent border border-white/5 text-gray-500 opacity-50 cursor-not-allowed'
+          }`}
+        >
+          {loadingMore ? 'Loading...' : hasMore ? 'Show All Reviews' : 'All Reviews Loaded'}
+        </button>
+      </div>
     </div>
   );
 };
