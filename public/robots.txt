@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://reverie-vert.vercel.app/sitemap.xml
