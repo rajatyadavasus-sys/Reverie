@@ -1,16 +1,21 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { searchMulti } from '../services/tmdb';
+import { searchMulti, getTrendingMovies } from '../services/tmdb';
 import MovieCard from '../components/common/MovieCard';
 import LoadingSpinner from '../components/common/LoadingSpinner';
-import { Search as SearchIcon, X } from 'lucide-react';
+import { Search as SearchIcon, X, TrendingUp } from 'lucide-react';
 
 const Search = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [query, setQuery] = useState(searchParams.get('q') || '');
   const [results, setResults] = useState([]);
+  const [recommendations, setRecommendations] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
+
+  useEffect(() => {
+    getTrendingMovies('day').then(data => setRecommendations(data.results.slice(0, 10))).catch(console.error);
+  }, []);
 
   const handleSearch = useCallback(async (q) => {
     if (!q.trim()) {
@@ -80,9 +85,20 @@ const Search = () => {
       {loading ? (
         <LoadingSpinner />
       ) : searched && results.length === 0 ? (
-        <div className="text-center py-20">
-          <p className="text-gray-400 text-2xl mb-3">No results found</p>
-          <p className="text-gray-500">Try a different search term</p>
+        <div className="py-10">
+          <div className="text-center mb-16">
+            <p className="text-gray-400 text-2xl mb-3">No exact matches found for "{query}"</p>
+            <p className="text-gray-500">Check out these popular recommendations instead</p>
+          </div>
+          <div className="flex items-center gap-2 mb-8">
+            <TrendingUp className="w-6 h-6 text-[var(--color-accent)]" />
+            <h2 className="text-2xl font-bold text-white">Trending Now</h2>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8">
+            {recommendations.map(item => (
+              <MovieCard key={`rec-${item.media_type || 'movie'}-${item.id}`} item={item} mediaType={item.media_type || 'movie'} />
+            ))}
+          </div>
         </div>
       ) : results.length > 0 ? (
         <div>

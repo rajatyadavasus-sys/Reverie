@@ -19,7 +19,7 @@ import { useWatched } from '../context/WatchedContext';
 import { useReviews } from '../context/ReviewContext';
 import { useAuth } from '../context/AuthContext';
 import { getReviewTag, getTagColors, ReviewIcon } from '../utils/ratings';
-import { collection, query, where, getDocs } from 'firebase/firestore';
+import { collection, query, where, getDocs, onSnapshot } from 'firebase/firestore';
 import { db } from '../config/firebase';
 
 const ReviewTag = ({ voteAverage, voteCount }) => {
@@ -75,55 +75,52 @@ const MediaDetails = () => {
   } : null;
 
   useEffect(() => {
+    // 1. Subscribe to Global Reviews real-time
+    const unsubscribeReviews = onSnapshot(
+      query(collection(db, 'global_reviews'), where('id', '==', Number(id))),
+      (snapshot) => {
+        const gReviews = snapshot.docs.map(doc => doc.data()).filter(d => d.media_type === mediaType);
+        // Sort by updatedAt descending (newest first)
+        gReviews.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+        setGlobalReviews(gReviews);
+      },
+      (error) => {
+        console.error('Error listening to global reviews:', error);
+      }
+    );
+
     const fetchData = async () => {
       setLoading(true);
       window.scrollTo(0, 0);
       try {
-        // Parallel fetch for TMDB + Firebase Global Reviews
-        const globalReviewsPromise = getDocs(
-          query(
-            collection(db, 'global_reviews'),
-            where('id', '==', Number(id))
-          )
-        )
-        .then(snapshot => snapshot.docs.map(doc => doc.data()).filter(d => d.media_type === mediaType))
-        .catch(err => {
-          console.error('Error fetching global reviews:', err);
-          return [];
-        });
-
         if (isTV) {
-          const [details, recs, sim, credits, videos, reviewsData, gReviews] = await Promise.all([
+          const [details, recs, sim, credits, videos, reviewsData] = await Promise.all([
             getTVDetails(id),
             getTVRecommendations(id),
             getSimilarTVShows(id),
             getTVCredits(id),
             getTVVideos(id),
-            getTVReviews(id),
-            globalReviewsPromise
+            getTVReviews(id)
           ]);
           setMedia(details);
           setSimilar(recs.results?.length > 0 ? recs.results : (sim.results || []));
           setCast(credits.cast || []);
           setTmdbReviews(reviewsData.results || []);
-          setGlobalReviews(gReviews);
           const trailer = pickTrailer(videos.results);
           if (trailer) setTrailerKey(trailer.key);
         } else {
-          const [details, recs, sim, credits, videos, reviewsData, gReviews] = await Promise.all([
+          const [details, recs, sim, credits, videos, reviewsData] = await Promise.all([
             getMovieDetails(id),
             getMovieRecommendations(id),
             getSimilarMovies(id),
             getMovieCredits(id),
             getMovieVideos(id),
-            getMovieReviews(id),
-            globalReviewsPromise
+            getMovieReviews(id)
           ]);
           setMedia(details);
           setSimilar(recs.results?.length > 0 ? recs.results : (sim.results || []));
           setCast(credits.cast || []);
           setTmdbReviews(reviewsData.results || []);
-          setGlobalReviews(gReviews);
           const trailer = pickTrailer(videos.results);
           if (trailer) setTrailerKey(trailer.key);
         }
@@ -135,7 +132,11 @@ const MediaDetails = () => {
     };
 
     fetchData();
-  }, [id, isTV]);
+
+    return () => {
+      unsubscribeReviews();
+    };
+  }, [id, isTV, mediaType]);
 
   if (loading) return <div className="pt-32"><LoadingSpinner /></div>;
   if (!media) return <div className="pt-32 text-center text-white text-xl">Not found.</div>;

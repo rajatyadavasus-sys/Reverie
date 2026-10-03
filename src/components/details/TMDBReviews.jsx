@@ -75,8 +75,6 @@ const ReviewCard = ({ review, isCurrentUser = false, isReverieUser = false }) =>
 
 const TMDBReviews = ({ reviews, globalReviews = [], userReview }) => {
   const { currentUser } = useAuth();
-  const [visibleCount, setVisibleCount] = useState(6);
-
   // Reverie reviews use 'tag' and 'opinion', not 'text'
   const hasUserReview = userReview && (userReview.tag || userReview.opinion);
   const hasGlobalReviews = globalReviews && globalReviews.length > 0;
@@ -90,11 +88,6 @@ const TMDBReviews = ({ reviews, globalReviews = [], userReview }) => {
     (gr) => !(currentUser && gr.authorUid === currentUser.uid)
   );
 
-  const totalReviews = (otherGlobalReviews.length) + (reviews?.length || 0);
-  const hasMore = visibleCount < totalReviews;
-  
-  const showMore = () => setVisibleCount((prev) => prev + 6);
-
   return (
     <div className="container mx-auto px-8 lg:px-16 pt-24">
       <div className="flex items-center gap-3 mb-10">
@@ -107,26 +100,15 @@ const TMDBReviews = ({ reviews, globalReviews = [], userReview }) => {
         {hasUserReview && <ReviewCard review={userReview} isCurrentUser={true} />}
 
         {/* Other Reverie community reviews */}
-        {otherGlobalReviews.slice(0, visibleCount).map((review, i) => (
+        {otherGlobalReviews.map((review, i) => (
           <ReviewCard key={`global-${i}`} review={review} isReverieUser={true} />
         ))}
 
         {/* TMDB community reviews */}
-        {reviews?.slice(0, Math.max(0, visibleCount - otherGlobalReviews.length)).map((review) => (
+        {reviews?.map((review) => (
           <ReviewCard key={review.id} review={review} />
         ))}
       </div>
-
-      {hasMore && (
-        <div className="mt-10 flex justify-center">
-          <button
-            onClick={showMore}
-            className="px-8 py-3 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-white font-semibold transition-all hover:scale-105"
-          >
-            Load More Reviews
-          </button>
-        </div>
-      )}
     </div>
   );
 };
